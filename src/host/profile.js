@@ -310,49 +310,6 @@ export function normalizeEnterpriseProfile(raw) {
   })
 }
 
-function projectInstitutionRuntime(runtime = {}) {
-  const provider = {}
-  for (const key of [
-    'displayName', 'reasoning', 'defaultContextWindow', 'defaultMaxTokens',
-    'maxRequestImageBytes', 'requestImagePixelBudget', 'requestImageMaxBytes',
-    'streamIdleTimeoutMs', 'retryPolicy', 'compat',
-  ]) {
-    if (runtime[key] !== undefined) provider[key] = runtime[key]
-  }
-  provider.models = Array.isArray(runtime.models) ? runtime.models.map(model => {
-    const projected = {}
-    for (const key of allowedModelKeys) if (model?.[key] !== undefined) projected[key] = model[key]
-    return projected
-  }) : runtime.models
-  return provider
-}
-
-export function enterpriseProfileFromInstitution(institution) {
-  const baseURL = String(institution.baseURL).replace(/\/+$/, '')
-  return normalizeEnterpriseProfile({
-    schemaVersion: PROFILE_SCHEMA_VERSION,
-    id: institution.id,
-    displayName: institution.displayName,
-    organization: institution.organization,
-    nativeInstitutionID: institution.id,
-    allowInsecureDevelopment: institution.allowInsecureDevelopment === true,
-    ...(institution.insecureDevelopmentOrigin === undefined ? {} : { insecureDevelopmentOrigin: institution.insecureDevelopmentOrigin }),
-    brand: institution.brand ?? {},
-    oidc: { issuer: baseURL, clientId: institution.publicClientID, scopes: institution.scopes },
-    keyBinding: {
-      baseURL: `${baseURL}/api/worker/v1`,
-      ...(institution.runtimeCredentialRef === undefined ? {} : { credentialRef: institution.runtimeCredentialRef }),
-    },
-    provider: {
-      id: institution.runtimeProviderID,
-      displayName: institution.runtime?.displayName ?? institution.displayName,
-      adapter: 'openai-compatible',
-      baseURL: `${baseURL}/open/api/v1`,
-      ...projectInstitutionRuntime(institution.runtime),
-    },
-  })
-}
-
 export function loadEnterpriseProfiles(raw = {}, environment = process.env) {
   const profiles = []
   if (raw.profile !== undefined) profiles.push(normalizeEnterpriseProfile(raw.profile))
@@ -364,15 +321,6 @@ export function loadEnterpriseProfiles(raw = {}, environment = process.env) {
     const parsed = JSON.parse(readFileSync(environment[raw.profilePathEnv], 'utf8'))
     const rows = Array.isArray(parsed) ? parsed : parsed.profiles ?? [parsed]
     profiles.push(...rows.map(normalizeEnterpriseProfile))
-  }
-  if (typeof raw.catalogPathEnv === 'string' && environment[raw.catalogPathEnv]) {
-    const catalog = JSON.parse(readFileSync(environment[raw.catalogPathEnv], 'utf8'))
-    const active = typeof raw.activeInstitutionEnv === 'string' ? environment[raw.activeInstitutionEnv] : catalog.defaultInstitution
-    const institutions = Array.isArray(catalog.institutions) ? catalog.institutions : []
-    const selected = active ? institutions.filter(candidate => candidate.id === active) : institutions
-    profiles.push(...selected
-      .filter(institution => Array.isArray(institution?.runtime?.models) && institution.runtime.models.length > 0)
-      .map(enterpriseProfileFromInstitution))
   }
   const unique = new Map()
   const providers = new Set()

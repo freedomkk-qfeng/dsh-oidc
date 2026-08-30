@@ -6,6 +6,7 @@
 
 | dsh-oidc | Node.js | DSH | pi-ai | 状态 |
 | --- | --- | --- | --- | --- |
+| `0.1.0-alpha.9` | 22、24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2`（已审查源码 Runtime 中为 `0.84.4`） | Web/native 只消费标准 Enterprise Profile；产品机构目录转换彻底移出插件。 |
 | `0.1.0-alpha.8` | 22、24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2`（已审查源码 Runtime 中为 `0.84.4`） | Web/native 共用 Profile 凭据引用规则；支持生产/测试本地 Key 隔离，并对 native 引用错配失败关闭。 |
 | `0.1.0-alpha.7` | 22、24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2`（已审查源码 Runtime 中为 `0.84.4`） | 开发环境可显式允许一个精确的网络 HTTP origin；生产仍强制 HTTPS。 |
 | `0.1.0-alpha.6` | 22、24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2`（已审查源码 Runtime 中为 `0.84.4`） | 使用上游“模型”页面和官方 `settings.models.footer`；匹配的 npm 包发布前，应通过源码 release-pack 验证。 |

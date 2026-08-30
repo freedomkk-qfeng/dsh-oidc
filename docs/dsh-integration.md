@@ -100,11 +100,10 @@ OIDC 注册、Key Binding 实现、环境变量、验收和排障见[接入指�
       config:
         backend: native
         uiMode: models-only
-        catalogPathEnv: PRODUCT_INSTITUTION_CATALOG
-        activeInstitutionEnv: PRODUCT_ACTIVE_INSTITUTION
+        profilePathEnv: PRODUCT_ENTERPRISE_PROFILE
 ```
 
-宿主提供 Cordis 服务 `enterpriseAccounts`：
+宿主提供 Cordis 服务 `enterpriseAccounts`。产品自有机构目录必须由宿主或装配层先转换为标准 Enterprise Profile；`dsh-oidc` 不读取或解释产品目录：
 
 ```ts
 interface EnterpriseAccounts {

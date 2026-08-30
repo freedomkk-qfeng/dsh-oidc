@@ -6,6 +6,13 @@
 
 ## [未发布]
 
+## [0.1.0-alpha.9] - 2026-08-31
+
+### 变更
+
+- 删除 `catalogPathEnv`、`activeInstitutionEnv` 和产品机构目录转换代码。Web 与 native 后端现在都只接受标准 Enterprise Profile；任何产品自有目录必须由产品装配层先转换。
+- Native `enterpriseAccounts` 继续作为可选的通用宿主能力接口，不依赖 Wails、Electron 或任何产品数据格式。
+
 ## [0.1.0-alpha.8] - 2026-08-31
 
 ### 新增
@@ -17,7 +24,7 @@
 
 - Web 回调固定为 `http://127.0.0.1:<DSH端口>/oauth/callback`，不再接受公网 `publicBaseURL` 或非 `127.0.0.1` 的 DSH WebServer。
 - Enterprise Profile 新增可选 `keyBinding.credentialRef`，让生产与测试在保持同一 Provider ID/服务端协议的同时隔离本地 DSH 凭据；省略时继续按 Provider ID 派生，旧配置无需迁移。
-- 桌面机构目录的 `runtimeCredentialRef` 现在进入同一通用 Profile 字段，不再由桌面外壳单独决定 Provider 读取位置。
+- 宿主提供的凭据引用现在必须进入同一通用 Profile 字段，不再允许宿主与 Provider 分别决定读取位置。
 - 示例与测试只使用保留文档地址，公开主分支不继承内部开发提交历史。
 
 ### 安全

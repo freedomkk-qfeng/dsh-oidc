@@ -100,11 +100,10 @@ See the [getting-started guide](getting-started.en.md) for OIDC registration, Ke
       config:
         backend: native
         uiMode: models-only
-        catalogPathEnv: PRODUCT_INSTITUTION_CATALOG
-        activeInstitutionEnv: PRODUCT_ACTIVE_INSTITUTION
+        profilePathEnv: PRODUCT_ENTERPRISE_PROFILE
 ```
 
-The host supplies Cordis service `enterpriseAccounts` with:
+The host supplies Cordis service `enterpriseAccounts`. Any product-owned institution catalog MUST first be converted by the host or assembly layer into a standard Enterprise Profile; `dsh-oidc` does not read or interpret product catalogs:
 
 ```ts
 interface EnterpriseAccounts {

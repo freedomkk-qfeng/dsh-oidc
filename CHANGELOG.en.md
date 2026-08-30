@@ -6,6 +6,13 @@ All notable changes are documented here. The format follows Keep a Changelog pri
 
 ## [Unreleased]
 
+## [0.1.0-alpha.9] - 2026-08-31
+
+### Changed
+
+- Removed `catalogPathEnv`, `activeInstitutionEnv`, and all product institution-catalog conversion code. Both Web and native backends now accept only standard Enterprise Profiles; product-owned catalogs must be converted by the product assembly layer first.
+- Native `enterpriseAccounts` remains an optional generic host capability interface with no Wails, Electron, or product-data-format dependency.
+
 ## [0.1.0-alpha.8] - 2026-08-31
 
 ### Added
@@ -17,7 +24,7 @@ All notable changes are documented here. The format follows Keep a Changelog pri
 
 - Fixed the Web callback to `http://127.0.0.1:<DSH-port>/oauth/callback`; public `publicBaseURL` and DSH WebServer hosts other than `127.0.0.1` are rejected.
 - Added optional Enterprise Profile `keyBinding.credentialRef`, allowing production and test to isolate local DSH credentials while retaining one Provider ID and server protocol. Omission preserves Provider-ID derivation, so existing profiles require no migration.
-- Desktop institution-catalog `runtimeCredentialRef` now projects into the same generic Profile field instead of letting the desktop shell independently determine the Provider lookup location.
+- Host-provided credential references must now enter the same generic Profile field instead of letting a host and Provider independently determine lookup locations.
 - Examples and tests now use reserved documentation addresses, and the public main branch does not inherit internal development history.
 
 ### Security

@@ -121,7 +121,6 @@ The callback host and path are not configurable. The port follows the actual DSH
 | `profile` | One inline Enterprise Profile object. |
 | `profiles` | An array of inline Enterprise Profiles. Provider IDs must also be unique. |
 | `profilePathEnv` | Name of an environment variable containing the trusted JSON profile path. |
-| `catalogPathEnv` / `activeInstitutionEnv` | Compatibility import for a trusted desktop institution catalog. |
 | `backend` | `web` (default) or `native`. Native delegates account lifecycle to the host's `enterpriseAccounts` service. |
 | `uiMode` | `standard` (shared model settings plus account/onboarding/branding), `models-only` (shared model settings only), or `external` (no plugin UI). |
 | `web.returnPath` | Same-origin absolute path after callback; defaults to `/`. |

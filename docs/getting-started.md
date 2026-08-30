@@ -182,11 +182,10 @@ dsh --profile web --host 127.0.0.1 --port 3080 --no-open
       config:
         backend: native
         uiMode: models-only
-        catalogPathEnv: PRODUCT_INSTITUTION_CATALOG
-        activeInstitutionEnv: PRODUCT_ACTIVE_INSTITUTION
+        profilePathEnv: PRODUCT_ENTERPRISE_PROFILE
 ```
 
-native backend 必须提供 `enterpriseAccounts` 服务。它可以由 Wails、Electron、Tauri 或其他宿主实现，`dsh-oidc` 本身不依赖任何桌面框架。接口和能力探测见 [DSH 集成说明](dsh-integration.md)。
+native backend 必须提供 `enterpriseAccounts` 服务，并与 Web 一样传入标准 Enterprise Profile。产品自有目录、租户或账号配置必须先由产品装配层转换为该 Profile，不能交给 `dsh-oidc` 解释。宿主可以由 Wails、Electron、Tauri 或其他技术实现；插件本身不依赖任何桌面框架或产品目录格式。接口和能力探测见 [DSH 集成说明](dsh-integration.md)。
 
 ## 7. 上线前验收
 

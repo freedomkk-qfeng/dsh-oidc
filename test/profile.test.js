@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
 import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import test from 'node:test'
 import { enterpriseProviderConfig, normalizeEnterpriseProfile, publicProfile } from '../src/host/profile.js'
 
@@ -100,61 +100,14 @@ test('profiles reject duplicate provider routes', async () => {
   assert.throws(() => loadEnterpriseProfiles({ profiles: [raw, { ...raw, id: 'second' }] }), /repeats provider route/)
 })
 
-test('desktop institution catalogs are projected into the public profile contract', async t => {
-  const root = await mkdtemp(join(tmpdir(), 'dsh-oidc-catalog-'))
+test('profilePathEnv loads only the standard Enterprise Profile document', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'dsh-oidc-profile-'))
   t.after(async () => { await rm(root, { recursive: true, force: true }) })
-  const catalogPath = join(root, 'institutions.json')
-  await writeFile(catalogPath, JSON.stringify({
-    defaultInstitution: 'campus',
-    institutions: [{
-      id: 'campus',
-      displayName: 'Campus AI',
-      organization: 'Example University',
-      baseURL: 'https://ai.example.edu',
-      publicClientID: 'public-client',
-      scopes: ['openid', 'profile'],
-      runtimeProviderID: 'campus-ai',
-      runtimeCredentialRef: 'CAMPUS_AI_TEST_API_KEY',
-      runtime: {
-        displayName: 'Campus Models',
-        modelSource: 'catalog-v2',
-        defaultContextWindow: 131072,
-        models: [{
-          id: 'campus-max',
-          name: 'Campus Max',
-          upstreamModelID: 'private-upstream-name',
-          contextWindow: 131072,
-          maxTokens: 32768,
-          input: ['text'],
-        }],
-      },
-    }],
-  }))
+  const path = join(root, 'enterprise-profile.json')
+  const raw = JSON.parse(await readFile(exampleURL, 'utf8'))
+  await writeFile(path, JSON.stringify({ profiles: [raw] }))
   const { loadEnterpriseProfiles } = await import('../src/host/profile.js')
-  const profiles = loadEnterpriseProfiles({
-    catalogPathEnv: 'TEST_CATALOG',
-    activeInstitutionEnv: 'TEST_ACTIVE',
-  }, { TEST_CATALOG: catalogPath, TEST_ACTIVE: 'campus' })
-  const profile = profiles.get('campus')
-  assert.equal(profile.provider.id, 'campus-ai')
-  assert.equal(profile.keyBinding.credentialRef, 'CAMPUS_AI_TEST_API_KEY')
-  assert.equal(profile.provider.models[0].id, 'campus-max')
-  assert.equal('modelSource' in profile.provider, false)
-  assert.equal('upstreamModelID' in profile.provider.models[0], false)
-})
-
-test('desktop institution catalogs preserve an explicit development HTTP origin', async () => {
-  const { enterpriseProfileFromInstitution } = await import('../src/host/profile.js')
-  const profile = enterpriseProfileFromInstitution({
-    id: 'campus', displayName: 'Campus AI', organization: 'Example University',
-    baseURL: 'http://192.0.2.10', publicClientID: 'public-client',
-    allowInsecureDevelopment: true, insecureDevelopmentOrigin: 'http://192.0.2.10',
-    scopes: ['openid', 'profile'], runtimeProviderID: 'campus-ai',
-    runtime: { models: [{ id: 'campus-max', input: ['text'] }] },
-  })
-  assert.equal(profile.insecureDevelopmentOrigin, 'http://192.0.2.10')
-  assert.equal(profile.provider.baseURL, 'http://192.0.2.10/open/api/v1')
-  const provider = enterpriseProviderConfig(new Map([[profile.id, profile]])).providers['campus-ai']
-  assert.equal(provider.allowInsecureDevelopment, true)
-  assert.equal(provider.insecureDevelopmentOrigin, 'http://192.0.2.10')
+  const profiles = loadEnterpriseProfiles({ profilePathEnv: 'ENTERPRISE_PROFILE' }, { ENTERPRISE_PROFILE: path })
+  assert.equal(profiles.size, 1)
+  assert.equal(profiles.get(raw.id).provider.id, 'example-ai')
 })

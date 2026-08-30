@@ -103,7 +103,7 @@ A product-owned Bundle may mount the plugin explicitly instead of using the defa
           returnPath: /
 ```
 
-Desktop products may use `backend: native` and supply the capability-detected `enterpriseAccounts` service. Wails, Electron, Tauri, and other hosts can implement that boundary; the plugin itself has no desktop-framework dependency. See [DSH integration](dsh-integration.en.md).
+Desktop products may use `backend: native`, point `profilePathEnv` at the same standard Enterprise Profile used by Web, and supply the capability-detected `enterpriseAccounts` service. Product-owned institution, tenant, or account catalogs MUST be converted to an Enterprise Profile by the product assembly layer before `dsh-oidc` reads them. Wails, Electron, Tauri, and other hosts can implement that boundary; the plugin depends on neither a desktop framework nor a product catalog format. See [DSH integration](dsh-integration.en.md).
 
 ## 7. Acceptance checklist
 
