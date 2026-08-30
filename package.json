@@ -5,6 +5,7 @@
   "keywords": [
     "deepseek-harness",
     "dsh",
+    "dsh-plugin",
     "oidc",
     "openid-connect",
     "enterprise",
