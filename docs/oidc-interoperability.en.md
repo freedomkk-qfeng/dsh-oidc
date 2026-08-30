@@ -2,7 +2,7 @@
 
 [简体中文](oidc-interoperability.md) | **English**
 
-OIDC is one part of the [complete institutional server contract](server-integration-contract.en.md). A conforming integration also requires the same accountable service owner to jointly deliver fixed Key Binding and the model gateway; implementing this document alone is not complete.
+OIDC is one part of the [server API specification](server-integration-contract.en.md). A conforming integration also requires the same accountable service owner to jointly deliver fixed Key Binding and the model gateway; implementing this document alone is not complete.
 
 ## Standards
 

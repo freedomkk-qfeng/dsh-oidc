@@ -15,7 +15,7 @@ The plugin is Web-first and has no Wails dependency. A desktop product can selec
 
 > **Status: alpha.** The code is usable for integration testing against DSH `0.1.2-alpha.1`. The Enterprise Profile and Key Binding contracts are `v1alpha1`/`v1`. The Web backend is local single-user only; security review and compatibility tests remain required before production use.
 
-Integrating your own organization? Read the **[complete institutional server contract](docs/server-integration-contract.en.md)** first, then follow the **[getting-started guide](docs/getting-started.en.md)**. The first defines the OIDC + PKCE, Key Binding, and model-gateway capabilities one institutional service must jointly deliver; the second covers configuration, installation, acceptance, and troubleshooting.
+Integrating your own organization? Read the **[server API specification](docs/server-integration-contract.en.md)** first, then follow the **[getting-started guide](docs/getting-started.en.md)**. The first defines, with requests, responses, fields, and errors, the OIDC + PKCE, Key Binding, and model-gateway capabilities one institutional service must jointly deliver; the second covers configuration, installation, acceptance, and troubleshooting.
 
 ## Why this boundary
 

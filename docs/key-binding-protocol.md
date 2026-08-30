@@ -6,7 +6,7 @@
 
 本文定义 `worker-user-center-v1`：`dsh-oidc` 用它把经 OIDC 认证的 subject 与模型运行时 API Key 绑定。这是企业管理协议，不属于 OIDC 标准。
 
-它是[机构服务端完整接入契约](server-integration-contract.md)的必需组成部分。实现方必须同时提供该契约要求的 OIDC Provider 与模型网关；只实现以下 API 不构成完整的 `dsh-oidc` 服务端。
+它是[服务端接口规范](server-integration-contract.md)的必需组成部分。实现方必须同时提供该规范要求的 OIDC Provider 与模型网关；只实现以下 API 不构成完整的 `dsh-oidc` 服务端。
 
 关键词 **必须（MUST）**、**不得（MUST NOT）**、**必需（REQUIRED）**、**应该（SHOULD）**、**不应该（SHOULD NOT）**、**建议（RECOMMENDED）**、**不建议（NOT RECOMMENDED）**、**可以（MAY）** 和 **可选（OPTIONAL）** 按 RFC 2119 与 RFC 8174 解释。
 

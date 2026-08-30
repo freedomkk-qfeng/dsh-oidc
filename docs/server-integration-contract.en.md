@@ -1,148 +1,41 @@
-# Complete institutional server integration contract
+# dsh-oidc server API specification
 
 [简体中文](server-integration-contract.md) | **English**
 
-This is the primary server-side integration specification for `dsh-oidc`. It treats OIDC Authorization Code + PKCE, Key Binding, and the model gateway as capabilities that one **institutional enterprise-model integration service** must deliver together, not as three optional modules.
+This document is written for identity-platform, model-platform, and integration-test teams. It defines, in API-reference form, the server capabilities required by `dsh-oidc`.
 
-“MUST”, “MUST NOT”, and “SHOULD” are normative. This project does not restate the full OIDC, OAuth, or OpenAI-compatible specifications. Key Binding is the fixed protocol defined by this project and has a machine-readable contract in [`protocol/openapi.yaml`](../protocol/openapi.yaml).
+“MUST”, “MUST NOT”, “SHOULD”, and “MAY” are normative. The OIDC interfaces follow OpenID Connect and OAuth 2.0; Key Binding is the fixed protocol defined by this project; the model gateway uses an OpenAI Chat Completions-compatible interface.
 
-## 1. One server contract, three protocol surfaces
+## 1. Integration scope
 
-A conforming integration has one accountable service owner for all three surfaces:
+A complete **institutional enterprise-model integration service** MUST provide all three interface groups:
 
-| Surface | Purpose | Enterprise Profile entry | Required |
+| Interface group | Purpose | Enterprise Profile configuration | Requirement |
 | --- | --- | --- | --- |
-| OIDC Provider | Login, identity, and Access Tokens | `oidc.issuer`, `oidc.clientId`, `oidc.scopes` | Yes |
-| Key Binding | Bind an authenticated user to a revocable model runtime credential | `keyBinding.baseURL` | Yes |
-| Model gateway | Invoke declared enterprise models with that credential | `provider.baseURL`, `provider.id`, `provider.models` | Yes |
+| OIDC Provider | Login, user identity, and OIDC Access Tokens | `oidc.issuer`, `oidc.clientId`, `oidc.scopes` | Complete implementation required |
+| Key Binding | Bind an authenticated user to a revocable model runtime credential | `keyBinding.baseURL` | All four operations required |
+| Model gateway | Invoke enterprise models with the bound runtime credential | `provider.baseURL`, `provider.id`, `provider.models` | Chat Completions required |
 
-“One service” means one complete delivery, versioning, and security boundary. It does not require all URLs to share one hostname or process. OIDC Discovery permits endpoints on different HTTPS origins, and an institution may route the surfaces to internal subsystems. From a `dsh-oidc` operator's perspective, however, the integration is complete only when all three are available and satisfy the cross-surface invariants below.
+“One service” means one complete product-delivery, versioning, security, and operational boundary. It does not require every endpoint to share a hostname, gateway, or process. An institution may internally separate its identity platform, user center, and model platform, but it cannot deliver only one part and claim a complete `dsh-oidc` integration.
 
-The following degraded arrangements are not supported:
+The following arrangements do not conform:
 
-- OIDC alone followed by distribution of one global model API key to every user;
-- Key Binding that trusts an employee number, name, or subject submitted by the client;
-- a model catalog without subject-based authorization and credential lifecycle enforcement;
-- a Profile that supplies private scripts, CSS, Provider adapters, or protocol paths.
+- OIDC alone, followed by distribution of one global model API key to all users;
+- Key Binding that trusts an employee number, name, or subject supplied by the client;
+- a model URL and catalog without user authorization and credential lifecycle management;
+- a Key Binding service missing any of `bootstrap`, `provision`, `resolve`, or `renew`.
 
-## 2. Fixed client callback
+## 2. Addresses and client registration
 
-The Web composition is a local, single-user application. Its OIDC Public Client MUST register this exact redirect URI:
+### 2.1 Three service entry points
 
-```text
-http://127.0.0.1:3080/oauth/callback
-```
-
-- The host is fixed to IPv4 loopback `127.0.0.1`; do not register `localhost`, a LAN address, or a public hostname.
-- The path is fixed to `/oauth/callback`.
-- `3080` is the recommended DSH WebServer port. If the operator explicitly changes the DSH port, the registered URI MUST use that same port.
-- The client is a Public Client without a Client Secret.
-- Authorization Code Flow and PKCE `S256` are required.
-
-This is the browser's return address to the local DSH process. `oidc.issuer`, Key Binding, and the model gateway remain remote institutional services and MUST use HTTPS in production. The current Web backend deliberately rejects a DSH WebServer bound to anything other than `127.0.0.1`; it is not a shared public-Web session solution.
-
-## 3. Required OIDC Provider capabilities
-
-### 3.1 Discovery
-
-`GET {issuer}/.well-known/openid-configuration` MUST return an `issuer` exactly equal to configuration and publish at least:
-
-- `authorization_endpoint`;
-- `token_endpoint`;
-- `jwks_uri`;
-- `userinfo_endpoint`;
-- `code_challenge_methods_supported` containing `S256`.
-
-If `id_token_signing_alg_values_supported` is published, it MUST include the currently supported `RS256`. `revocation_endpoint` is optional; when present, the client makes a best-effort token revocation during logout.
-
-### 3.2 Authorization and Token
-
-The service MUST accept an Authorization Code request containing `state`, `nonce`, `code_challenge`, and `code_challenge_method=S256`. The token endpoint MUST validate `code_verifier` and MUST NOT require a Client Secret from the Public Client.
-
-The ID Token MUST contain valid `iss`, `aud`, `sub`, `iat`, `exp`, and the request's `nonce`. It must be signed with an RS256 key carrying `kid` and published by the Discovery `jwks_uri`.
-
-### 3.3 UserInfo
-
-UserInfo MUST return:
-
-- `sub`: required, non-empty, and exactly equal to the ID Token `sub`;
-- `name`: strongly recommended and used as the human-readable account label; the client falls back to `sub` when absent.
-
-`dsh-oidc` does not call private directory APIs or support JSONPath name mapping. Institutions that want a human-readable name must publish the standard UserInfo `name` claim. See [OIDC interoperability](oidc-interoperability.en.md) for detailed constraints.
-
-### 3.4 Access Token
-
-The Access Token may be a JWT or opaque token. Key Binding MUST validate issuer, audience, expiry, not-before, scopes, subject, account state, and institutional authorization. The client does not submit a body subject that can be trusted.
-
-## 4. Required Key Binding capabilities
-
-The institutional service MUST implement all four fixed `worker-user-center/v1` operations:
-
-```text
-GET  {keyBinding.baseURL}/bootstrap
-POST {keyBinding.baseURL}/runtime-credential/provision
-POST {keyBinding.baseURL}/runtime-credential/resolve
-POST {keyBinding.baseURL}/runtime-credential/renew
-```
-
-Every request uses the OIDC Access Token:
-
-```http
-Authorization: Bearer <oidc-access-token>
-```
-
-The service MUST derive the subject from the validated token and enforce Provider authorization, account state, and credential lifecycle policy. `provision` and `renew` MUST support `Idempotency-Key`. A successful response's `provider_id` MUST exactly match Profile `provider.id`. `api_key` MUST be returned with `Cache-Control: no-store` and MUST NOT enter URLs, logs, APM, audit fields, or error details.
-
-The full requests, responses, lifecycle states, errors, and idempotency rules are defined in [Key Binding protocol](key-binding-protocol.en.md) and [`protocol/openapi.yaml`](../protocol/openapi.yaml). Omitting any of the four operations is not a complete server implementation.
-
-## 5. Required model-gateway capabilities
-
-`provider.baseURL` MUST identify an institution-authorized, OpenAI-compatible HTTPS API. The current adapter uses DSH's official Pi adapter and its OpenAI-compatible networking implementation. The server MUST:
-
-- accept the runtime API key returned by Key Binding;
-- validate key state, Provider scope, expiry, quota, and revocation;
-- implement the model IDs and input capabilities declared in the Profile;
-- return interoperable streaming responses, errors, and rate-limit results;
-- prevent revoked or rotated old keys from retaining indefinite access.
-
-The trusted Enterprise Profile declares the model catalog. A browser or remote response cannot inject an executable adapter.
-
-## 6. Cross-protocol invariants
-
-One institutional integration service MUST guarantee:
-
-1. OIDC UserInfo `sub` equals ID Token `sub`.
-2. Key Binding resolves the same subject from the same Access Token.
-3. Bootstrap, credential responses, and Enterprise Profile use exactly the same `provider.id`.
-4. A Key Binding API key is authorized only for that subject and Provider.
-5. Model IDs actually served by the gateway match Profile declarations.
-6. Logout, account suspension, authorization revocation, and credential rotation can propagate to runtime credentials.
-7. OIDC tokens and model API keys have separate purposes and validation paths and cannot substitute for one another.
-8. Logs may contain an opaque subject reference, `api_key_id`, and correlation ID, but never tokens or `api_key`.
-
-Display data from bootstrap cannot override OIDC identity. The user name comes only from standard UserInfo `name`; Key Binding is responsible for authorization and credential binding.
-
-## 7. Complete flow
-
-1. The client reads OIDC Discovery.
-2. The browser starts Authorization Code + PKCE at the institutional login page.
-3. The identity platform redirects to `127.0.0.1:<port>/oauth/callback`.
-4. The client validates state, nonce, issuer, audience, signature, and time claims, then reads UserInfo.
-5. The client calls Key Binding `bootstrap` with the OIDC Access Token.
-6. After explicit user consent it calls `provision`; an existing credential uses `resolve`, and an expiring credential uses `renew`.
-7. the DSH Credential Provider stores the OIDC session and runtime model key locally.
-8. The DSH Provider adapter invokes the model gateway with the runtime key.
-9. Logout clears the local session and runtime key and makes a best-effort standard OIDC revocation call. Final remote runtime-key revocation remains an institutional policy responsibility.
-
-## 8. Enterprise Profile mapping
-
-The Profile contains only public, reviewable deployment facts:
+An Enterprise Profile declares the three entry points separately:
 
 ```json
 {
   "oidc": {
     "issuer": "https://id.example.edu/oidc",
-    "clientId": "dsh-public-client",
+    "clientId": "dsh-web-public-client",
     "scopes": ["openid", "profile", "offline_access"]
   },
   "keyBinding": {
@@ -151,22 +44,663 @@ The Profile contains only public, reviewable deployment facts:
   "provider": {
     "id": "example-ai",
     "baseURL": "https://ai.example.edu/open/api/v1",
-    "models": []
+    "adapter": "openai-compatible",
+    "models": [
+      { "id": "example-model", "input": ["text"] }
+    ]
   }
 }
 ```
 
-The Profile MUST NOT contain a Client Secret, OIDC token, model API key, real user data, administrative credential, or remotely executable content. See [Enterprise Profile](enterprise-profile.en.md) for all fields.
+In production, `issuer`, `keyBinding.baseURL`, and `provider.baseURL` MUST use HTTPS. URLs MUST NOT contain credentials or fragments, and base URLs MUST NOT depend on query parameters to alter routing behavior.
 
-## 9. Conformance and acceptance
+### 2.2 OIDC Public Client
 
-An institutional server integration is conforming only when it:
+The identity platform MUST register a Public Client without a Client Secret and enable:
 
-- implements OIDC Discovery, Authorization Code + PKCE, Token, JWKS, and UserInfo;
-- registers the exact loopback redirect URI for a Public Client;
-- implements all four Key Binding operations with the required idempotency and response security;
-- provides a Profile-consistent model gateway that accepts bound credentials;
-- passes positive and negative tests for state, nonce, subject, Provider, expiry, revocation, authorization bypass, replay, and log redaction;
-- does not introduce global keys, Client Secrets, or private directory APIs into client configuration.
+- Authorization Code Flow;
+- PKCE `S256`;
+- the `openid` and `profile` scopes;
+- `offline_access` and the corresponding authorization policy when Refresh Tokens are required.
 
-See [Getting started](getting-started.en.md#7-acceptance-checklist) and the [public release checklist](release-checklist.en.md) for operational acceptance.
+The redirect URI MUST be registered exactly as:
+
+```text
+http://127.0.0.1:3080/oauth/callback
+```
+
+Constraints:
+
+- the host is fixed to `127.0.0.1`, not `localhost`, a LAN address, or a public hostname;
+- the path is fixed to `/oauth/callback`;
+- `3080` is the recommended port; if DSH WebServer uses another port, the registered URI MUST use that actual port;
+- this is the browser's return address to the user's local DSH process, not an institutional server address;
+- the current implementation is a local single-user Web composition and does not support a shared public-Web callback.
+
+## 3. API summary
+
+| ID | Method | Address | Authentication | Required |
+| --- | --- | --- | --- | --- |
+| OIDC-01 | `GET` | `{issuer}/.well-known/openid-configuration` | None | Yes |
+| OIDC-02 | `GET` | Discovery `authorization_endpoint` | User login session | Yes |
+| OIDC-03 | `POST` | Discovery `token_endpoint` | Authorization Code + PKCE | Yes |
+| OIDC-04 | `GET` | Discovery `jwks_uri` | None | Yes |
+| OIDC-05 | `GET` | Discovery `userinfo_endpoint` | OIDC Bearer Access Token | Yes |
+| OIDC-06 | `POST` | Discovery `revocation_endpoint` | OIDC Token | Recommended |
+| KEY-01 | `GET` | `{keyBinding.baseURL}/bootstrap` | OIDC Bearer Access Token | Yes |
+| KEY-02 | `POST` | `{keyBinding.baseURL}/runtime-credential/provision` | OIDC Bearer Access Token | Yes |
+| KEY-03 | `POST` | `{keyBinding.baseURL}/runtime-credential/resolve` | OIDC Bearer Access Token | Yes |
+| KEY-04 | `POST` | `{keyBinding.baseURL}/runtime-credential/renew` | OIDC Bearer Access Token | Yes |
+| MODEL-01 | `POST` | `{provider.baseURL}/chat/completions` | Runtime API Key | Yes |
+
+## 4. OIDC interface group
+
+### OIDC-01: Discovery
+
+Reads OIDC Provider metadata.
+
+#### Request
+
+```http
+GET /oidc/.well-known/openid-configuration HTTP/1.1
+Host: id.example.edu
+Accept: application/json
+```
+
+When the issuer itself has a path, the Discovery address is:
+
+```text
+{issuer-without-trailing-slash}/.well-known/openid-configuration
+```
+
+#### Success response
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "issuer": "https://id.example.edu/oidc",
+  "authorization_endpoint": "https://id.example.edu/oidc/authorize",
+  "token_endpoint": "https://id.example.edu/oidc/token",
+  "jwks_uri": "https://id.example.edu/oidc/jwks",
+  "userinfo_endpoint": "https://id.example.edu/oidc/userinfo",
+  "revocation_endpoint": "https://id.example.edu/oidc/revoke",
+  "code_challenge_methods_supported": ["S256"],
+  "id_token_signing_alg_values_supported": ["RS256"]
+}
+```
+
+#### Field requirements
+
+| Field | Required | Requirement |
+| --- | --- | --- |
+| `issuer` | Yes | Exact string match with Enterprise Profile `oidc.issuer` |
+| `authorization_endpoint` | Yes | Absolute HTTPS URL |
+| `token_endpoint` | Yes | Absolute HTTPS URL |
+| `jwks_uri` | Yes | Absolute HTTPS URL |
+| `userinfo_endpoint` | Yes | Required by this interoperability profile |
+| `revocation_endpoint` | No | When present, the client attempts revocation during logout |
+| `code_challenge_methods_supported` | Yes | MUST contain `S256` |
+| `id_token_signing_alg_values_supported` | Should | SHOULD contain `RS256`; the actual ID Token MUST use RS256 |
+
+Discovered endpoints may use different HTTPS origins. Development HTTP is accepted only for the single explicitly configured development origin or a loopback origin.
+
+### OIDC-02: Authorization
+
+The browser starts Authorization Code Flow with PKCE.
+
+#### Request
+
+```http
+GET /oidc/authorize?
+  response_type=code&
+  client_id=dsh-web-public-client&
+  redirect_uri=http%3A%2F%2F127.0.0.1%3A3080%2Foauth%2Fcallback&
+  scope=openid%20profile%20offline_access&
+  state=<random-state>&
+  nonce=<random-nonce>&
+  code_challenge=<base64url-sha256>&
+  code_challenge_method=S256 HTTP/1.1
+Host: id.example.edu
+```
+
+#### Query parameters
+
+| Parameter | Requirement |
+| --- | --- |
+| `response_type` | Fixed to `code` |
+| `client_id` | Equal to Profile `oidc.clientId` |
+| `redirect_uri` | Exact match with the registered loopback callback |
+| `scope` | At least `openid profile` |
+| `state` | Generated by the client and returned unchanged |
+| `nonce` | Generated by the client and included in the corresponding ID Token |
+| `code_challenge` | PKCE challenge |
+| `code_challenge_method` | Fixed to `S256` |
+
+#### Success redirect
+
+```http
+HTTP/1.1 302 Found
+Location: http://127.0.0.1:3080/oauth/callback?code=<authorization-code>&state=<original-state>
+```
+
+An RFC 9207 `iss` response parameter MAY also be returned. When present, it MUST equal the Profile issuer.
+
+#### Error redirect
+
+```text
+http://127.0.0.1:3080/oauth/callback?error=access_denied&error_description=...&state=<original-state>
+```
+
+The server MUST NOT omit `state`. An Authorization Code MUST be single-use, short-lived, and bound to the client, redirect URI, and PKCE challenge.
+
+### OIDC-03: Token
+
+The client exchanges an Authorization Code and PKCE verifier for tokens. The Public Client does not send a Client Secret.
+
+#### Authorization Code request
+
+```http
+POST /oidc/token HTTP/1.1
+Host: id.example.edu
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+grant_type=authorization_code&
+client_id=dsh-web-public-client&
+code=<authorization-code>&
+redirect_uri=http%3A%2F%2F127.0.0.1%3A3080%2Foauth%2Fcallback&
+code_verifier=<pkce-verifier>
+```
+
+#### Success response
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "access_token": "<oidc-access-token>",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "id_token": "<signed-id-token>",
+  "refresh_token": "<optional-refresh-token>",
+  "scope": "openid profile offline_access"
+}
+```
+
+| Field | Required | Requirement |
+| --- | --- | --- |
+| `access_token` | Yes | Non-empty; used for UserInfo and Key Binding |
+| `token_type` | Yes | `Bearer`, case-insensitive |
+| `expires_in` | Should | Positive seconds; the client uses 3600 seconds when absent |
+| `id_token` | Yes | RS256-signed JWT |
+| `refresh_token` | No | Recommended when `offline_access` is enabled |
+| `scope` | No | Actually granted scopes |
+
+The ID Token MUST contain at least:
+
+| Claim | Requirement |
+| --- | --- |
+| `iss` | Equal to Profile `oidc.issuer` |
+| `aud` | Contains `oidc.clientId`; with multiple audiences, `azp` MUST equal that client ID |
+| `sub` | Non-empty, stable user identifier |
+| `iat`, `exp` | Valid NumericDate values |
+| `nonce` | Exact match with the Authorization request |
+| `nbf` | Optional; valid when present |
+| `at_hash` | Optional; MUST match the Access Token when present |
+
+The JWT header MUST use `alg=RS256` and contain a non-empty `kid`.
+
+#### Refresh Token request
+
+```http
+POST /oidc/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+grant_type=refresh_token&
+client_id=dsh-web-public-client&
+refresh_token=<refresh-token>
+```
+
+The response MUST contain at least a new `access_token`, `token_type=Bearer`, and valid `expires_in`. When Refresh Token rotation is used, it SHOULD also return a new `refresh_token`. An `invalid_grant` response causes the client to clear its local OIDC session and model runtime credential.
+
+#### Error response
+
+Token errors follow OAuth 2.0:
+
+```http
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "error": "invalid_grant",
+  "error_description": "Authorization code is invalid or expired"
+}
+```
+
+### OIDC-04: JWKS
+
+Publishes the public signing keys needed to verify ID Tokens.
+
+#### Request
+
+```http
+GET /oidc/jwks HTTP/1.1
+Accept: application/json
+```
+
+#### Success response
+
+```json
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "kid": "signing-key-2026-01",
+      "use": "sig",
+      "alg": "RS256",
+      "n": "<base64url-modulus>",
+      "e": "AQAB"
+    }
+  ]
+}
+```
+
+The `kid` used by an ID Token MUST identify exactly one RSA signing key. During rotation, the old public key SHOULD remain available until every valid Token signed by it has expired.
+
+### OIDC-05: UserInfo
+
+Returns the standard user identity represented by the current Access Token.
+
+#### Request
+
+```http
+GET /oidc/userinfo HTTP/1.1
+Authorization: Bearer <oidc-access-token>
+Accept: application/json
+```
+
+#### Success response
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "sub": "user-12345",
+  "name": "Example User"
+}
+```
+
+| Field | Required | Purpose |
+| --- | --- | --- |
+| `sub` | Yes | Exact match with ID Token `sub` |
+| `name` | Should | Human-readable UI label; the client falls back to `sub` when absent or empty |
+
+The server SHOULD provide the standard `name` claim directly. `dsh-oidc` does not call private institutional directory APIs or support JSONPath name mapping. Other standard claims may be returned, but they cannot replace `sub` for binding.
+
+### OIDC-06: Revocation (recommended)
+
+When Discovery publishes a `revocation_endpoint`, the client submits its Refresh Token during logout, or its Access Token when no Refresh Token exists.
+
+```http
+POST /oidc/revoke HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+token=<refresh-or-access-token>&client_id=dsh-web-public-client
+```
+
+Remote revocation is best-effort during logout. The local OIDC session and runtime credential are cleared whether or not the remote call succeeds. Remote revocation of the model runtime API key remains the responsibility of Key Binding and model-platform lifecycle policy.
+
+## 5. Key Binding interface group
+
+### 5.1 Common conventions
+
+The relative paths, HTTP methods, and wire field names of all four operations are fixed and cannot be configured in the Profile.
+
+Every request MUST include:
+
+```http
+Authorization: Bearer <oidc-access-token>
+Accept: application/json
+```
+
+The server MUST validate token issuer, audience, expiry, not-before, scopes, subject, account state, and institutional authorization. The subject MUST be derived from the validated Token. A subject, employee number, or name supplied in the request body MUST NOT be trusted as identity.
+
+Recommended scopes:
+
+| Interface | Scope |
+| --- | --- |
+| KEY-01 Bootstrap | `worker.bootstrap.read` |
+| KEY-02 Provision | `worker.credential.provision` |
+| KEY-03 Resolve | `worker.credential.read` |
+| KEY-04 Renew | `worker.credential.renew` |
+
+An institution may use different scope names, but the actual names MUST be included in Profile `oidc.scopes` and enforced by the server.
+
+### KEY-01: Bootstrap
+
+Reads the Provider, server capabilities, user entitlement, and runtime-credential state. This operation MUST NOT return a model API key.
+
+#### Request
+
+```http
+GET /api/worker/v1/bootstrap HTTP/1.1
+Host: ai.example.edu
+Authorization: Bearer <oidc-access-token>
+Accept: application/json
+```
+
+#### Success response
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "protocol_version": "worker-user-center/v1",
+  "provider": {
+    "id": "example-ai"
+  },
+  "capabilities": [
+    "worker.bootstrap.read",
+    "worker.credential.provision",
+    "worker.credential.read",
+    "worker.credential.renew"
+  ],
+  "runtime_credential": {
+    "status": "missing",
+    "provisioning": {
+      "allowed": true
+    }
+  }
+}
+```
+
+#### Response fields
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `protocol_version` | No | When present, MUST be `worker-user-center/v1` |
+| `provider.id` | Yes | Exact match with Profile `provider.id` |
+| `capabilities` | Yes | String array with at most 256 entries |
+| `runtime_credential.status` | Yes | Current credential state |
+| `runtime_credential.api_key_id` | Conditional | Recommended for an existing credential; required by Renew |
+| `runtime_credential.expires_at` | No | RFC 3339 timestamp |
+| `runtime_credential.provisioning.allowed` | No | Whether credential creation is allowed |
+| `runtime_credential.provisioning.reason` | No | Non-sensitive user-facing reason, at most 500 characters |
+| `subject` | No | Management-plane display only; cannot override OIDC identity |
+
+`runtime_credential.status` values:
+
+| State | Client behavior |
+| --- | --- |
+| `missing` | Wait for explicit user consent, then call Provision |
+| `active` | Call Resolve |
+| `expiring` | Call Renew when `api_key_id` exists, otherwise Resolve |
+| `expired` | Call Renew when `api_key_id` exists, otherwise Resolve |
+| `suspended` | Clear the local runtime credential and do not invoke a model |
+| `unavailable` | Clear the local runtime credential and show service unavailable |
+
+### KEY-02: Provision
+
+Creates or binds a runtime credential for the authenticated and authorized subject. Completing the OIDC callback alone does not call this operation; the user must explicitly consent in the UI.
+
+#### Request
+
+```http
+POST /api/worker/v1/runtime-credential/provision HTTP/1.1
+Authorization: Bearer <oidc-access-token>
+Content-Type: application/json
+Accept: application/json
+Idempotency-Key: 2b9b6c80-7758-4d3f-94c6-b72d91ca8c53
+
+{
+  "provider_id": "example-ai"
+}
+```
+
+| Field/header | Required | Requirement |
+| --- | --- | --- |
+| `Idempotency-Key` | Yes | One UUID for one logical create operation |
+| `provider_id` | Yes | Exact match with Profile `provider.id` |
+
+The idempotency scope MUST include authenticated subject, Provider, and Idempotency-Key. A retry with the same key and payload MUST produce the same logical result. Reusing the same key with a different payload MUST return `409 Conflict`.
+
+#### Success response
+
+See [Common runtime-credential response](#55-common-runtime-credential-response). A first creation MAY return `201 Created`; an existing or completed binding MAY return `200 OK`.
+
+### KEY-03: Resolve
+
+Resolves the active runtime credential already bound to the current subject. Resolve MUST NOT create a new entitlement.
+
+#### Request
+
+```http
+POST /api/worker/v1/runtime-credential/resolve HTTP/1.1
+Authorization: Bearer <oidc-access-token>
+Content-Type: application/json
+Accept: application/json
+
+{
+  "provider_id": "example-ai",
+  "api_key_id": "key-123"
+}
+```
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `provider_id` | Yes | Provider ID declared in the Profile |
+| `api_key_id` | No | Known credential ID returned by Bootstrap |
+
+Return `404` when no credential can be resolved. The server may rotate opaque secret material while preserving a logical `api_key_id`, but MUST NOT return a credential owned by another subject or Provider.
+
+### KEY-04: Renew
+
+Rotates an expiring or expired runtime credential.
+
+#### Request
+
+```http
+POST /api/worker/v1/runtime-credential/renew HTTP/1.1
+Authorization: Bearer <oidc-access-token>
+Content-Type: application/json
+Accept: application/json
+Idempotency-Key: 2f94dc48-201a-475e-a61a-69d7880e1186
+
+{
+  "provider_id": "example-ai",
+  "api_key_id": "key-123"
+}
+```
+
+`provider_id`, `api_key_id`, and `Idempotency-Key` are all required. The same idempotency rules as Provision apply. After the new credential becomes active, the server SHOULD invalidate the old secret as soon as safely possible and record any necessary overlap window.
+
+### 5.5 Common runtime-credential response
+
+Provision, Resolve, and Renew use the same success structure:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+Pragma: no-cache
+
+{
+  "provider_id": "example-ai",
+  "api_key": "<secret-runtime-api-key>",
+  "api_key_id": "key-123",
+  "status": "active",
+  "expires_at": "2026-09-01T00:00:00Z"
+}
+```
+
+| Field | Required | Requirement |
+| --- | --- | --- |
+| `provider_id` | Yes | Exact match with the request and Profile |
+| `api_key` | Yes | Non-empty, at most 16 KiB; used only for the model gateway |
+| `api_key_id` | No | Recommended for lifecycle management and audit correlation |
+| `status` | Yes | Fixed to `active` |
+| `expires_at` | No | RFC 3339 timestamp |
+
+A response containing `api_key` MUST use `Cache-Control: no-store` and SHOULD use `Pragma: no-cache`. Reverse proxies, WAFs, APM agents, application logs, and audit logs MUST redact the Authorization header and `api_key`.
+
+### 5.6 Key Binding error response
+
+Errors SHOULD use RFC 9457 `application/problem+json`:
+
+```http
+HTTP/1.1 403 Forbidden
+Content-Type: application/problem+json
+
+{
+  "type": "https://ai.example.edu/problems/model-entitlement-denied",
+  "title": "Model entitlement denied",
+  "status": 403,
+  "detail": "The current account cannot use this provider",
+  "code": "model_entitlement_denied"
+}
+```
+
+| HTTP status | Meaning |
+| --- | --- |
+| `400` | Invalid request structure or Provider ID |
+| `401` | Missing, invalid, expired, or wrong-audience Access Token; SHOULD include `WWW-Authenticate` |
+| `403` | Scope, institutional membership, model entitlement, account state, or provisioning policy denial |
+| `404` | No resolvable or renewable credential |
+| `409` | Idempotency or credential-lifecycle conflict |
+| `429` | Rate limit; SHOULD include `Retry-After` |
+| `5xx` | Server failure; response MUST NOT contain a Token or API Key |
+
+`code` SHOULD remain stable for UI and log classification. `detail` may vary but MUST NOT disclose sensitive information.
+
+The machine-readable Key Binding contract is [`protocol/openapi.yaml`](../protocol/openapi.yaml).
+
+## 6. Model-gateway interface group
+
+### MODEL-01: Chat Completions
+
+`dsh-oidc` currently invokes an OpenAI Chat Completions-compatible interface through DSH's official Pi adapter.
+
+#### Request
+
+```http
+POST /open/api/v1/chat/completions HTTP/1.1
+Host: ai.example.edu
+Authorization: Bearer <runtime-api-key>
+Content-Type: application/json
+Accept: text/event-stream
+
+{
+  "model": "example-model",
+  "messages": [
+    { "role": "user", "content": "Hello" }
+  ],
+  "stream": true,
+  "max_tokens": 1024
+}
+```
+
+| Item | Requirement |
+| --- | --- |
+| Authentication | Accept the `api_key` returned by Key Binding; do not accept an OIDC Token as a substitute |
+| `model` | Implement every model ID declared in Profile `provider.models` |
+| `messages` | Support the OpenAI Chat Completions message structure |
+| `stream` | Streaming responses are required |
+| Image input | Required only when the Profile declares `input: ["text", "image"]` for that model |
+| Reasoning parameters | Match Profile `reasoning`, `reasoningEfforts`, and `compat` declarations |
+| Tools | MUST support `tools`, `tool_choice`, and streamed `tool_calls` for DSH Agent tool use |
+
+#### Streaming success response
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/event-stream
+Cache-Control: no-cache
+
+data: {"id":"chatcmpl-1","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"Hel"}}]}
+
+data: {"id":"chatcmpl-1","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"lo"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-1","object":"chat.completion.chunk","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}
+
+data: [DONE]
+```
+
+For every runtime API key, the server MUST enforce subject binding, Provider scope, credential state, expiry, revocation, and quota. A revoked or rotated old key MUST NOT retain indefinite access.
+
+#### Error response
+
+Errors SHOULD interoperate with OpenAI-compatible clients, for example:
+
+```json
+{
+  "error": {
+    "message": "Runtime credential has expired",
+    "type": "authentication_error",
+    "code": "credential_expired"
+  }
+}
+```
+
+The gateway SHOULD distinguish at least: `400` invalid request, `401` invalid credential, `403` access denied, `404` unknown model, `429` rate/quota limit, and `5xx` server failure.
+
+The trusted Enterprise Profile declares the model catalog. A gateway does not need to implement `/models` to conform to this specification.
+
+## 7. Cross-interface invariants
+
+The service MUST guarantee:
+
+1. UserInfo `sub` exactly equals ID Token `sub`.
+2. Key Binding derives the same subject from the Access Token and does not trust request-body identity.
+3. Profile `provider.id`, Bootstrap `provider.id`, and runtime-credential `provider_id` are exactly equal.
+4. A runtime API key is authorized only for its subject and Provider.
+5. Model IDs, input modalities, and reasoning capabilities actually served by the gateway match the Profile.
+6. OIDC Tokens are used only for UserInfo and Key Binding; runtime API keys are used only for the model gateway. They are not interchangeable.
+7. Account suspension, authorization revocation, and credential rotation propagate to runtime credentials and the model gateway.
+8. Logs may contain a correlation ID, opaque subject reference, Provider ID, and `api_key_id`, but never a Token or `api_key`.
+9. Bootstrap `subject` data is display-only and cannot override OIDC `sub` or `name`.
+
+## 8. Standard call sequence
+
+```text
+Client -> OIDC-01 Discovery
+Client -> OIDC-02 Authorization (browser + PKCE)
+OIDC   -> 127.0.0.1:<port>/oauth/callback
+Client -> OIDC-03 Token
+Client -> OIDC-04 JWKS (verify ID Token)
+Client -> OIDC-05 UserInfo
+Client -> KEY-01 Bootstrap
+Client -> KEY-02 Provision (first use with explicit consent)
+          or KEY-03 Resolve (active credential)
+          or KEY-04 Renew (expiring/expired credential)
+Client -> MODEL-01 Chat Completions
+```
+
+When the Access Token is close to expiry, the client uses the Refresh Token grant on OIDC-03. Logout clears the local OIDC session and runtime credential and calls OIDC-06 when available.
+
+## 9. Integration acceptance checklist
+
+A complete integration MUST pass at least these tests:
+
+- exact Discovery issuer match, all required endpoints present, and PKCE `S256` advertised;
+- callback uses only `127.0.0.1:<actual-port>/oauth/callback`;
+- state, nonce, PKCE verifier, ID Token signature, audience, and expiry are validated;
+- UserInfo returns a non-empty `sub` matching the ID Token, and `name` displays correctly;
+- all four Key Binding operations exist, with Provision, Resolve, or Renew selected from lifecycle state;
+- Provision and Renew are idempotent, and incompatible replay returns `409`;
+- Provider ID is identical across Profile, Bootstrap, and credential response;
+- a Key Binding Access Token cannot call the model gateway, and a model API key cannot call UserInfo or Key Binding;
+- expired/revoked runtime credentials, suspended accounts, and unauthorized access are rejected;
+- Chat Completions completes at least one streaming text conversation; declared multimodal and reasoning capabilities pass their corresponding tests;
+- Tokens, Authorization headers, and `api_key` never appear in URLs, logs, APM, error details, or audit data;
+- every failure response has a stable, diagnosable, non-secret error structure.
+
+See [Enterprise Profile](enterprise-profile.en.md) for configuration fields, [OIDC interoperability](oidc-interoperability.en.md) for additional OIDC details, and [Key Binding protocol](key-binding-protocol.en.md) for lifecycle and security semantics.

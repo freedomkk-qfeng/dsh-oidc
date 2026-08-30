@@ -15,7 +15,7 @@
 
 > **当前状态：alpha。** 当前源码已适配 DSH `0.1.2-alpha.1`（提交 `cd5ef814…`），并可在官方源码 release-pack Runtime 中完成构建与集成测试；Enterprise Profile 仍为 `v1alpha1`。在对应 DSH npm 包发布前，请按源码兼容流程验收，不要用旧版 npm 包替代。正式生产前仍必须完成真实 OIDC/Key Binding 联调、宿主凭据隔离审计和 DSH 升级兼容性测试。
 
-准备接入自己的机构？先读 **[机构服务端完整接入契约](docs/server-integration-contract.md)**，再按 **[完整中文接入指南](docs/getting-started.md)** 部署。前者明确一个机构服务必须共同实现的 OIDC + PKCE、Key Binding 和模型网关能力；后者覆盖配置、安装、验收和排障。
+准备接入自己的机构？先读 **[服务端接口规范](docs/server-integration-contract.md)**，再按 **[完整中文接入指南](docs/getting-started.md)** 部署。前者以请求、响应、字段和错误码形式定义一个机构服务必须共同实现的 OIDC + PKCE、Key Binding 和模型网关能力；后者覆盖配置、安装、验收和排障。
 
 ## 为什么叫 `dsh-oidc`
 
@@ -60,7 +60,7 @@
 
 ## 最小接入步骤
 
-1. 按[机构服务端完整接入契约](docs/server-integration-contract.md)联合提供 OIDC、Key Binding 和模型网关。
+1. 按[服务端接口规范](docs/server-integration-contract.md)联合提供 OIDC、Key Binding 和模型网关。
 2. 为无 Client Secret 的 Public Client 精确登记 `http://127.0.0.1:3080/oauth/callback`。
 3. 从 [`examples/enterprise-profile.example.json`](examples/enterprise-profile.example.json) 复制一份可信本地配置。
 4. clone 本仓库并从本地 checkout 安装：
@@ -108,7 +108,7 @@ OIDC 部分坚持标准化，不增加机构私有的 UserInfo 映射语法：
 - 展示名取 `name`，缺失时才取 `sub`；
 - bootstrap 中即使返回姓名，也不得覆盖 OIDC 身份。
 
-OIDC、Key Binding 和模型网关共同构成一个完整的机构服务端交付契约，不能任选。Key Binding 是本项目定义的企业协议：用户只配置 `baseURL`，其余路径、请求字段和响应字段全部固定。Provider ID 同时决定运行路由和凭据名，例如 `example-ai` 对应 `EXAMPLE_AI_API_KEY`。完整约束见[机构服务端完整接入契约](docs/server-integration-contract.md)。
+OIDC、Key Binding 和模型网关共同构成一个完整的机构服务端交付，不能任选。Key Binding 是本项目定义的企业协议：用户只配置 `baseURL`，其余路径、请求字段和响应字段全部固定。Provider ID 同时决定运行路由和凭据名，例如 `example-ai` 对应 `EXAMPLE_AI_API_KEY`。完整接口见[服务端接口规范](docs/server-integration-contract.md)。
 
 ## 开发与复核
 
@@ -122,7 +122,7 @@ npm run check
 详细材料：
 
 - [`docs/architecture.md`](docs/architecture.md)：组合架构与代码边界
-- [`docs/server-integration-contract.md`](docs/server-integration-contract.md)：机构服务端必须共同实现的完整协议契约
+- [`docs/server-integration-contract.md`](docs/server-integration-contract.md)：机构服务端必须共同实现的完整接口规范
 - [`docs/getting-started.md`](docs/getting-started.md)：第三方从零接入、部署、验收与排障
 - [`docs/enterprise-profile.md`](docs/enterprise-profile.md)：Enterprise Profile 字段和信任规则
 - [`docs/oidc-interoperability.md`](docs/oidc-interoperability.md)：OIDC 兼容性要求

@@ -2,7 +2,7 @@
 
 **简体中文** | [English](oidc-interoperability.en.md)
 
-OIDC 是[机构服务端完整接入契约](server-integration-contract.md)的一部分。合格的机构接入还必须由同一服务所有者联合提供固定 Key Binding 和模型网关能力；只实现本文件并不构成完整接入。
+OIDC 是[服务端接口规范](server-integration-contract.md)的一部分。合格的机构接入还必须由同一服务所有者联合提供固定 Key Binding 和模型网关能力；只实现本文件并不构成完整接入。
 
 ## 标准依据
 

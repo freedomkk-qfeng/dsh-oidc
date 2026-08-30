@@ -6,7 +6,7 @@
 
 This document defines `worker-user-center-v1`, the enterprise management protocol used by `dsh-oidc` to bind an OIDC-authenticated subject to a model runtime API key. It is not part of OIDC.
 
-It is a required part of the [complete institutional server contract](server-integration-contract.en.md). An implementation must also provide the OIDC Provider and model gateway required by that contract; implementing only the API below is not a complete `dsh-oidc` server.
+It is a required part of the [server API specification](server-integration-contract.en.md). An implementation must also provide the OIDC Provider and model gateway required by that specification; implementing only the API below is not a complete `dsh-oidc` server.
 
 The key words **MUST**, **MUST NOT**, **REQUIRED**, **SHALL**, **SHALL NOT**, **SHOULD**, **SHOULD NOT**, **RECOMMENDED**, **NOT RECOMMENDED**, **MAY**, and **OPTIONAL** are interpreted as described by RFC 2119 and RFC 8174.
 

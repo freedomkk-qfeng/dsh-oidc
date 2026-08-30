@@ -8,7 +8,7 @@ All notable changes are documented here. The format follows Keep a Changelog pri
 
 ### Added
 
-- Added bilingual [complete institutional server contract](docs/server-integration-contract.en.md), making OIDC + PKCE, Key Binding, and the model gateway one jointly required institutional delivery.
+- Added a bilingual [server API specification](docs/server-integration-contract.en.md) that documents OIDC + PKCE, Key Binding, and the model gateway as one jointly required institutional delivery in API-reference form.
 - Completed open-source cleanup of Chinese-default/English documentation, public repository links, maintainers, and the private security-reporting entry point.
 
 ### Changed

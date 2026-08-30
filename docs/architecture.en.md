@@ -56,7 +56,7 @@ sequenceDiagram
   L->>M: OpenAI-compatible streaming request
 ```
 
-The OIDC Provider, Key Binding, and model gateway in the diagram are three protocol surfaces of one [complete institutional server contract](server-integration-contract.en.md). They may route to different internal systems or origins, but an operator cannot choose only a subset. The Web callback always returns to local `127.0.0.1`, not a public institutional DSH address.
+The OIDC Provider, Key Binding, and model gateway in the diagram are three interface groups in one [server API specification](server-integration-contract.en.md). They may route to different internal systems or origins, but an operator cannot choose only a subset. The Web callback always returns to local `127.0.0.1`, not a public institutional DSH address.
 
 ## Code layout
 

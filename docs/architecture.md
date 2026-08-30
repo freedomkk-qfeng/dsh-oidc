@@ -56,7 +56,7 @@ sequenceDiagram
   L->>M: OpenAI-compatible 流式请求
 ```
 
-图中 OIDC Provider、Key Binding 和模型网关是同一个[机构服务端完整接入契约](server-integration-contract.md)的三个协议表面。它们可以在机构内部拆成不同系统或域名，但不能由部署方任选其一。Web 回调始终返回本机 `127.0.0.1`，不经过机构公网 DSH 地址。
+图中 OIDC Provider、Key Binding 和模型网关是同一份[服务端接口规范](server-integration-contract.md)的三个接口组。它们可以在机构内部拆成不同系统或域名，但不能由部署方任选其一。Web 回调始终返回本机 `127.0.0.1`，不经过机构公网 DSH 地址。
 
 ## 代码布局
 

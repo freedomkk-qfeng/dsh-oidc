@@ -8,7 +8,7 @@
 
 ### 新增
 
-- 增加中英文[机构服务端完整接入契约](docs/server-integration-contract.md)，明确 OIDC + PKCE、Key Binding 和模型网关是同一机构服务必须共同交付的完整能力。
+- 增加中英文[服务端接口规范](docs/server-integration-contract.md)，按接口说明形式定义 OIDC + PKCE、Key Binding 和模型网关这一完整机构服务必须共同交付的能力。
 - 中英文文档默认入口、公开仓库地址、维护者和私密安全报告入口完成开源化整理。
 
 ### 变更

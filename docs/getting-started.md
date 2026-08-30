@@ -21,7 +21,7 @@
 | Enterprise Profile | 部署方 | 一份受信任的本地 JSON，只存公开配置，不存密钥或个人信息。 |
 | Credential Provider | DSH Host | 当前 Web backend 仅支持可信单用户本机存储。 |
 
-先把[机构服务端完整接入契约](server-integration-contract.md)交给身份平台与模型平台共同确认。只有 OIDC 时，插件只能证明“用户是谁”；没有 Key Binding 和模型网关，就无法安全完成“这个用户可以调用哪些企业模型”的闭环。不要把全局模型 API Key 写进 Enterprise Profile。
+先把[服务端接口规范](server-integration-contract.md)交给身份平台与模型平台共同确认。只有 OIDC 时，插件只能证明“用户是谁”；没有 Key Binding 和模型网关，就无法安全完成“这个用户可以调用哪些企业模型”的闭环。不要把全局模型 API Key 写进 Enterprise Profile。
 
 ## 2. 注册 OIDC Public Client
 
@@ -43,7 +43,7 @@ OIDC Provider 必须通过 Discovery 发布 `authorization_endpoint`、`token_en
 
 ## 3. 实现完整机构服务端
 
-同一机构服务交付必须完整提供上一节的 OIDC、下面的 Key Binding，以及接受绑定凭据的 OpenAI-compatible 模型网关。它们可以由内部不同系统承载，但必须有统一的版本、安全和运维责任。总规范见[机构服务端完整接入契约](server-integration-contract.md)。
+同一机构服务交付必须完整提供上一节的 OIDC、下面的 Key Binding，以及接受绑定凭据的 OpenAI-compatible 模型网关。它们可以由内部不同系统承载，但必须有统一的版本、安全和运维责任。接口定义见[服务端接口规范](server-integration-contract.md)。
 
 Key Binding 不是 OIDC 标准的一部分，而是 `dsh-oidc` 定义的企业模型凭据协议。Enterprise Profile 只配置一个 `baseURL`，插件固定调用：
 
@@ -198,7 +198,7 @@ native backend 必须提供 `enterpriseAccounts` 服务。它可以由 Wails、E
 7. refresh、过期、撤销、权限不足、限流和 Key Binding 不可用均有可理解的失败结果；
 8. logout 清理本地 OIDC 会话和模型凭据，并尽力调用标准 revocation endpoint；
 9. DSH WebServer 只监听 `127.0.0.1`，没有通过反向代理或端口映射暴露为共享站点；
-10. OIDC、全部四个 Key Binding 操作和模型网关按[完整服务端契约](server-integration-contract.md)联合通过验收。
+10. OIDC、全部四个 Key Binding 操作和模型网关按[服务端接口规范](server-integration-contract.md)联合通过验收。
 
 当前 Web backend 不支持共享 Web。需要共享场景时必须由具备每用户隔离的新宿主 backend 承担，不能直接放宽 loopback 约束。详见 [安全模型](security-model.md) 和 [公开发布检查表](release-checklist.md)。
 

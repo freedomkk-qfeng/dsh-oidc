@@ -15,7 +15,7 @@ This guide is for operators integrating `dsh-oidc` into their own DeepSeek Harne
 | Enterprise Profile | Trusted local JSON containing public configuration only. |
 | Credential Provider | The current Web backend supports trusted single-user local storage only. |
 
-Have the identity and model-platform teams jointly review the [complete institutional server contract](server-integration-contract.en.md). OIDC alone establishes identity; without Key Binding and the model gateway it does not safely complete model authorization. Do not place a shared model API key in an Enterprise Profile.
+Have the identity and model-platform teams jointly review the [server API specification](server-integration-contract.en.md). OIDC alone establishes identity; without Key Binding and the model gateway it does not safely complete model authorization. Do not place a shared model API key in an Enterprise Profile.
 
 ## 2. Register the OIDC Public Client
 
@@ -31,7 +31,7 @@ See the complete [OIDC interoperability profile](oidc-interoperability.en.md).
 
 ## 3. Implement the complete institutional service
 
-One institutional delivery must provide the OIDC surface above, the Key Binding surface below, and an OpenAI-compatible model gateway that accepts the bound credentials. Internal systems may host different surfaces, but versioning, security, and operations have one accountable integration boundary. See the [complete institutional server contract](server-integration-contract.en.md).
+One institutional delivery must provide the OIDC interface group above, the Key Binding interface group below, and an OpenAI-compatible model gateway that accepts the bound credentials. Internal systems may host different interfaces, but versioning, security, and operations have one accountable integration boundary. See the [server API specification](server-integration-contract.en.md).
 
 The configured `keyBinding.baseURL` has four fixed operations:
 
@@ -116,7 +116,7 @@ Before production, verify at least:
 7. refresh, expiry, revocation, authorization denial, rate limiting, and backend outage behavior are understandable;
 8. logout clears local OIDC and model credentials and attempts standard token revocation;
 9. the DSH WebServer listens only on `127.0.0.1` and is not exposed as a shared site through a proxy or port mapping;
-10. OIDC, all four Key Binding operations, and the model gateway jointly pass the [complete server contract](server-integration-contract.en.md).
+10. OIDC, all four Key Binding operations, and the model gateway jointly pass the [server API specification](server-integration-contract.en.md).
 
 The current Web backend does not support shared Web. A shared scenario needs a new host backend with per-user isolation; do not simply relax the loopback restriction. See the [security model](security-model.en.md) and [public release checklist](release-checklist.en.md).
 
