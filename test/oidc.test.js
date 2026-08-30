@@ -309,3 +309,16 @@ test('native backend delegates lifecycle and model management without introducin
     'updateCustom', 'removeInstitution', 'configureCustomModels', 'restart',
   ])
 })
+
+test('native backend fails closed when the host and Enterprise Profile disagree on the credential reference', async () => {
+  const service = {
+    async status() {
+      return { credentialReady: true, runtimeCredentialRef: 'WRONG_ENVIRONMENT_API_KEY' }
+    },
+  }
+  const backend = new NativeOidcBackend({ get: name => name === 'enterpriseAccounts' ? service : undefined }, new Map([[profile.id, profile]]))
+  await assert.rejects(
+    () => backend.status(profile.id),
+    error => error.code === 'oidc_native_credential_ref_mismatch',
+  )
+})

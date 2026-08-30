@@ -108,7 +108,7 @@ OIDC 部分坚持标准化，不增加机构私有的 UserInfo 映射语法：
 - 展示名取 `name`，缺失时才取 `sub`；
 - bootstrap 中即使返回姓名，也不得覆盖 OIDC 身份。
 
-OIDC、Key Binding 和模型网关共同构成一个完整的机构服务端交付，不能任选。Key Binding 是本项目定义的企业协议：用户只配置 `baseURL`，其余路径、请求字段和响应字段全部固定。Provider ID 同时决定运行路由和凭据名，例如 `example-ai` 对应 `EXAMPLE_AI_API_KEY`。完整接口见[服务端接口规范](docs/server-integration-contract.md)。
+OIDC、Key Binding 和模型网关共同构成一个完整的机构服务端交付，不能任选。Key Binding 是本项目定义的企业协议：Profile 通过 `baseURL` 指定接口组，其余路径、请求字段和响应字段全部固定。Provider ID 决定运行路由，并默认派生凭据引用（例如 `example-ai` 对应 `EXAMPLE_AI_API_KEY`）；生产/测试复用同一 Provider ID 时，可以用本地 `keyBinding.credentialRef` 明确隔离，且不会改变服务端接口。完整接口见[服务端接口规范](docs/server-integration-contract.md)。
 
 ## 开发与复核
 

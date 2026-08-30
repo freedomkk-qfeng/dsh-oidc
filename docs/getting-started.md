@@ -45,7 +45,7 @@ OIDC Provider 必须通过 Discovery 发布 `authorization_endpoint`、`token_en
 
 同一机构服务交付必须完整提供上一节的 OIDC、下面的 Key Binding，以及接受绑定凭据的 OpenAI-compatible 模型网关。它们可以由内部不同系统承载，但必须有统一的版本、安全和运维责任。接口定义见[服务端接口规范](server-integration-contract.md)。
 
-Key Binding 不是 OIDC 标准的一部分，而是 `dsh-oidc` 定义的企业模型凭据协议。Enterprise Profile 只配置一个 `baseURL`，插件固定调用：
+Key Binding 不是 OIDC 标准的一部分，而是 `dsh-oidc` 定义的企业模型凭据协议。Enterprise Profile 用 `baseURL` 指定接口组基址，插件固定调用：
 
 ```text
 GET  {baseURL}/bootstrap
@@ -53,6 +53,8 @@ POST {baseURL}/runtime-credential/provision
 POST {baseURL}/runtime-credential/resolve
 POST {baseURL}/runtime-credential/renew
 ```
+
+Profile 还可以用可选的 `keyBinding.credentialRef` 隔离本地 DSH Credential Provider 中的秘密条目。它不参与网络请求，也不改变下列接口；普通单环境部署省略即可。生产/测试复用相同 Provider ID 时，应使用不同的引用名。
 
 每个请求都携带 OIDC Access Token：
 
@@ -72,6 +74,7 @@ Authorization: Bearer <oidc-access-token>
 - `brand` 中有权使用的名称、颜色和支持地址；
 - `oidc.issuer`、Public `clientId` 与 scopes；
 - `keyBinding.baseURL`；
+- 跨环境需要隔离本地 Key 时，可选配置 `keyBinding.credentialRef`；
 - `provider.id`、OpenAI-compatible `baseURL` 和模型列表。
 
 典型结构如下：

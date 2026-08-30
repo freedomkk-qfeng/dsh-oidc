@@ -6,6 +6,8 @@
 
 ## [未发布]
 
+## [0.1.0-alpha.8] - 2026-08-31
+
 ### 新增
 
 - 增加中英文[服务端接口规范](docs/server-integration-contract.md)，按接口说明形式定义 OIDC + PKCE、Key Binding 和模型网关这一完整机构服务必须共同交付的能力。
@@ -14,7 +16,13 @@
 ### 变更
 
 - Web 回调固定为 `http://127.0.0.1:<DSH端口>/oauth/callback`，不再接受公网 `publicBaseURL` 或非 `127.0.0.1` 的 DSH WebServer。
+- Enterprise Profile 新增可选 `keyBinding.credentialRef`，让生产与测试在保持同一 Provider ID/服务端协议的同时隔离本地 DSH 凭据；省略时继续按 Provider ID 派生，旧配置无需迁移。
+- 桌面机构目录的 `runtimeCredentialRef` 现在进入同一通用 Profile 字段，不再由桌面外壳单独决定 Provider 读取位置。
 - 示例与测试只使用保留文档地址，公开主分支不继承内部开发提交历史。
+
+### 安全
+
+- Native 宿主若报告与 Enterprise Profile 不一致的凭据引用，插件会失败关闭，避免生产/测试环境交叉读取 API Key。
 
 ## [0.1.0-alpha.7] - 2026-08-30
 

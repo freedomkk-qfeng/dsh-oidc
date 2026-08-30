@@ -123,7 +123,7 @@ interface EnterpriseAccounts {
 }
 ```
 
-`NativeStatus` may include `displayName`, `organization`, `state`, `userName`, `affiliation`, `accessExpiresAt`, `runtimeCredentialRef`, `credentialReady`, `credentialState`, and `capabilities`.
+`NativeStatus` may include `displayName`, `organization`, `state`, `userName`, `affiliation`, `accessExpiresAt`, `runtimeCredentialRef`, `credentialReady`, `credentialState`, and `capabilities`. `runtimeCredentialRef` is only a host status assertion; when present, it MUST equal the normalized Enterprise Profile `keyBinding.credentialRef`. Credential naming belongs to the Profile, not to Wails, Electron, or any other host implementation.
 
 Only the first four lifecycle operations are required for a native identity backend. Management operations are capability-detected: when absent, the same UI remains a read-only profile/model viewer. This is a host adapter, not part of OIDC or Key Binding wire standards. It can be implemented by Wails, Electron, Tauri, a mobile bridge, or another local host.
 

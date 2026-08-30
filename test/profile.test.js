@@ -33,8 +33,25 @@ test('Enterprise Profiles reject executable, unknown, and unsafe fields', async 
   assert.throws(() => normalizeEnterpriseProfile({ ...raw, provider: { ...raw.provider, adapter: 'remote-module' } }), /unsupported provider adapter/)
   assert.throws(() => normalizeEnterpriseProfile({ ...raw, provider: { ...raw.provider, module: 'https:\/\/evil.example\/plugin.js' } }), /profile\.provider\.module is not allowed/)
   assert.throws(() => normalizeEnterpriseProfile({ ...raw, keyBinding: { ...raw.keyBinding, resolvePath: '/secret' } }), /profile\.keyBinding\.resolvePath is not allowed/)
+  assert.throws(() => normalizeEnterpriseProfile({ ...raw, keyBinding: { ...raw.keyBinding, credentialRef: 'invalid-ref' } }), /valid DSH credential reference/)
   assert.throws(() => normalizeEnterpriseProfile({ ...raw, brand: { ...raw.brand, logoURL: 'data:image\/svg+xml;base64,PHN2Zz4=' } }), /base64 PNG\/WebP/)
   assert.throws(() => normalizeEnterpriseProfile({ ...raw, provider: { ...raw.provider, retryPolicy: { mode: 'normal', unexpected: true } } }), /retryPolicy\.unexpected is not allowed/)
+})
+
+test('credential references may be scoped per deployment while preserving the provider-derived default', async () => {
+  const raw = JSON.parse(await readFile(exampleURL, 'utf8'))
+  assert.equal(normalizeEnterpriseProfile(raw).keyBinding.credentialRef, 'EXAMPLE_AI_API_KEY')
+  const testProfile = normalizeEnterpriseProfile({
+    ...raw,
+    id: 'example-university-test',
+    keyBinding: { ...raw.keyBinding, credentialRef: 'EXAMPLE_AI_TEST_API_KEY' },
+  })
+  assert.equal(testProfile.provider.id, 'example-ai')
+  assert.equal(testProfile.keyBinding.credentialRef, 'EXAMPLE_AI_TEST_API_KEY')
+  assert.equal(
+    enterpriseProviderConfig(new Map([[testProfile.id, testProfile]])).providers['example-ai'].apiKeyEnv,
+    'EXAMPLE_AI_TEST_API_KEY',
+  )
 })
 
 test('insecure development endpoints require loopback or an exact explicit origin', async () => {
@@ -97,6 +114,7 @@ test('desktop institution catalogs are projected into the public profile contrac
       publicClientID: 'public-client',
       scopes: ['openid', 'profile'],
       runtimeProviderID: 'campus-ai',
+      runtimeCredentialRef: 'CAMPUS_AI_TEST_API_KEY',
       runtime: {
         displayName: 'Campus Models',
         modelSource: 'catalog-v2',
@@ -119,6 +137,7 @@ test('desktop institution catalogs are projected into the public profile contrac
   }, { TEST_CATALOG: catalogPath, TEST_ACTIVE: 'campus' })
   const profile = profiles.get('campus')
   assert.equal(profile.provider.id, 'campus-ai')
+  assert.equal(profile.keyBinding.credentialRef, 'CAMPUS_AI_TEST_API_KEY')
   assert.equal(profile.provider.models[0].id, 'campus-max')
   assert.equal('modelSource' in profile.provider, false)
   assert.equal('upstreamModelID' in profile.provider.models[0], false)

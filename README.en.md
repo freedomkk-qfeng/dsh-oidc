@@ -142,6 +142,8 @@ Given `keyBinding.baseURL = https://ai.example.edu/api/worker/v1`, the only vali
 
 The profile cannot change these paths or their fields. [`protocol/openapi.yaml`](protocol/openapi.yaml) is the machine-readable contract; [Key Binding protocol](docs/key-binding-protocol.en.md) defines normative behavior, authorization, idempotency, logging, and lifecycle semantics.
 
+Provider ID determines the runtime route and, by default, derives the local credential reference (for example, `example-ai` becomes `EXAMPLE_AI_API_KEY`). Production and test deployments that reuse one Provider ID may explicitly isolate their local secret entries with `keyBinding.credentialRef`; this does not change the server API.
+
 ## Development
 
 ```bash

@@ -123,7 +123,7 @@ interface EnterpriseAccounts {
 }
 ```
 
-`NativeStatus` 可以包含 `displayName`、`organization`、`state`、`userName`、`affiliation`、`accessExpiresAt`、`runtimeCredentialRef`、`credentialReady`、`credentialState` 和 `capabilities`。
+`NativeStatus` 可以包含 `displayName`、`organization`、`state`、`userName`、`affiliation`、`accessExpiresAt`、`runtimeCredentialRef`、`credentialReady`、`credentialState` 和 `capabilities`。`runtimeCredentialRef` 只是宿主状态回报；若提供，必须等于 Enterprise Profile 规范化后的 `keyBinding.credentialRef`。凭据命名策略属于 Profile，不属于 Wails、Electron 或其他宿主实现。
 
 Native 身份后端只必须实现前四项生命周期操作。管理操作通过能力探测：缺少这些方法时，同一 UI 会保持为只读 Profile/模型查看器。这是宿主 adapter，不属于 OIDC 或 Key Binding 网络标准；Wails、Electron、Tauri、移动桥接或其他本地宿主均可实现。
 

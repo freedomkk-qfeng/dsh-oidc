@@ -6,6 +6,8 @@ All notable changes are documented here. The format follows Keep a Changelog pri
 
 ## [Unreleased]
 
+## [0.1.0-alpha.8] - 2026-08-31
+
 ### Added
 
 - Added a bilingual [server API specification](docs/server-integration-contract.en.md) that documents OIDC + PKCE, Key Binding, and the model gateway as one jointly required institutional delivery in API-reference form.
@@ -14,7 +16,13 @@ All notable changes are documented here. The format follows Keep a Changelog pri
 ### Changed
 
 - Fixed the Web callback to `http://127.0.0.1:<DSH-port>/oauth/callback`; public `publicBaseURL` and DSH WebServer hosts other than `127.0.0.1` are rejected.
+- Added optional Enterprise Profile `keyBinding.credentialRef`, allowing production and test to isolate local DSH credentials while retaining one Provider ID and server protocol. Omission preserves Provider-ID derivation, so existing profiles require no migration.
+- Desktop institution-catalog `runtimeCredentialRef` now projects into the same generic Profile field instead of letting the desktop shell independently determine the Provider lookup location.
 - Examples and tests now use reserved documentation addresses, and the public main branch does not inherit internal development history.
+
+### Security
+
+- Native hosts now fail closed when their reported credential reference conflicts with the Enterprise Profile, preventing production/test API-key cross-resolution.
 
 ## [0.1.0-alpha.7] - 2026-08-30
 

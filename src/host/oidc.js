@@ -571,6 +571,12 @@ export class NativeOidcBackend {
   }
 
   normalize(profile, status) {
+    if (status.runtimeCredentialRef !== undefined && status.runtimeCredentialRef !== profile.keyBinding.credentialRef) {
+      throw publicError(
+        'oidc_native_credential_ref_mismatch',
+        `native OIDC adapter credential reference does not match Enterprise Profile ${profile.id}`,
+      )
+    }
     return {
       profileID: profile.id,
       displayName: status.displayName ?? profile.displayName,
@@ -579,7 +585,7 @@ export class NativeOidcBackend {
       ...(status.userName ? { userName: status.userName } : {}),
       ...(status.affiliation ? { affiliation: status.affiliation } : {}),
       ...(status.accessExpiresAt ? { accessExpiresAt: status.accessExpiresAt } : {}),
-      credentialRef: status.runtimeCredentialRef ?? profile.keyBinding.credentialRef,
+      credentialRef: profile.keyBinding.credentialRef,
       credentialReady: status.credentialReady === true,
       ...(status.credentialState ? { credentialState: status.credentialState } : {}),
       capabilities: Array.isArray(status.capabilities) ? status.capabilities : [],

@@ -42,13 +42,15 @@ POST /runtime-credential/resolve
 POST /runtime-credential/renew
 ```
 
+The Profile may additionally use optional `keyBinding.credentialRef` to isolate entries in the local DSH Credential Provider. It is not sent over the network and does not alter these operations. Omit it for an ordinary single-environment deployment; use distinct references when production and test reuse the same Provider ID.
+
 Every request carries the OIDC Access Token as a Bearer credential. The service must validate issuer, audience, expiry, scopes, subject, and organization authorization. It must not trust `provider_id` by itself. Credential responses are `no-store`, and `api_key` must never enter logs, metrics labels, or error details.
 
 Use the normative [Key Binding protocol](key-binding-protocol.en.md) and machine-readable [`protocol/openapi.yaml`](../protocol/openapi.yaml). OIDC and the model gateway use their established interfaces, so this project does not duplicate them in another OpenAPI document.
 
 ## 4. Create an Enterprise Profile
 
-Copy [`examples/enterprise-profile.example.json`](../examples/enterprise-profile.example.json) and replace the organization, bounded brand values, OIDC public-client facts, Key Binding base URL, OpenAI-compatible Provider base URL, and model catalog.
+Copy [`examples/enterprise-profile.example.json`](../examples/enterprise-profile.example.json) and replace the organization, bounded brand values, OIDC public-client facts, Key Binding base URL, OpenAI-compatible Provider base URL, and model catalog. Configure optional `keyBinding.credentialRef` only when local keys must be isolated across environments.
 
 The Profile is trusted deployment data, not a secret store. It must not contain client secrets, tokens, API keys, signing keys, cookies, or personal records. See the full [Enterprise Profile specification](enterprise-profile.en.md).
 

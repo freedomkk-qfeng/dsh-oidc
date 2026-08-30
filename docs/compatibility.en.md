@@ -6,6 +6,8 @@
 
 | dsh-oidc | Node.js | DSH | pi-ai | Status |
 | --- | --- | --- | --- | --- |
+| `0.1.0-alpha.8` | 22, 24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2` (`0.84.4` in the reviewed source Runtime) | Shared Web/native Profile credential-reference rule, production/test local-key isolation, and fail-closed native mismatch handling. |
+| `0.1.0-alpha.7` | 22, 24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2` (`0.84.4` in the reviewed source Runtime) | An exact network HTTP origin may be allowed for development; production remains HTTPS-only. |
 | `0.1.0-alpha.6` | 22, 24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2` (`0.84.4` in the reviewed source Runtime) | Uses the upstream Models page and official `settings.models.footer`; validate through a source release-pack until matching npm packages are published. |
 | `0.1.0-alpha.5` | 22, 24 (development) | `0.1.1-rc.2` / `b150a551…` | `0.82.1` | Local-checkout-first installation documentation; runtime behavior is unchanged from alpha.4. |
 | `0.1.0-alpha.4` | 22, 24 (development) | `0.1.1-rc.2` / `b150a551…` | `0.82.1` | Direct DSH Web Bundle installation and complete third-party deployment documentation; product/Web acceptance completed in the ECNU reference composition. |
@@ -34,7 +36,7 @@ Before `1.0.0`, minor versions may contain incompatible alpha contract changes, 
 After `1.0.0`:
 
 - additive optional profile fields and error codes may be minor releases;
-- removing/renaming fields, changing fixed paths, callback path, credential derivation, or identity rules requires a major release or a separately versioned contract;
+- removing/renaming fields, changing fixed paths, callback path, default credential derivation, or identity rules requires a major release or a separately versioned contract;
 - security hardening that rejects previously accepted unsafe input may ship in a minor or patch release with prominent notice.
 
 ## Release gates

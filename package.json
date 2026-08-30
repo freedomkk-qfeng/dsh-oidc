@@ -1,6 +1,6 @@
 {
   "name": "dsh-oidc",
-  "version": "0.1.0-alpha.7",
+  "version": "0.1.0-alpha.8",
   "description": "Standards-based OIDC identity, enterprise API-key binding, declarative branding, and OpenAI-compatible model integration for DeepSeek Harness",
   "keywords": [
     "deepseek-harness",

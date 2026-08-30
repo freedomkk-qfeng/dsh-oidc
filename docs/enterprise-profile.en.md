@@ -18,7 +18,7 @@ Profiles are trusted deployment configuration, not user input. Nevertheless, the
 - development HTTP is accepted only for explicit loopback hosts;
 - URL credentials, fragments, and endpoint-base query strings are rejected;
 - only the built-in `openai-compatible` adapter can be selected;
-- Key Binding accepts only `baseURL`;
+- Key Binding accepts only its protocol base and an optional local DSH credential reference; network paths and fields remain fixed;
 - logo data URLs accept PNG/WebP only, not SVG.
 
 A remote administration system MAY distribute profile JSON only if the host authenticates the source, verifies integrity, and stages changes through review. Downloaded JSON does not become safe merely because it contains no JavaScript.
@@ -36,7 +36,7 @@ A remote administration system MAY distribute profile JSON only if the host auth
 | `insecureDevelopmentOrigin` | no | Exact non-TLS development origin. It is accepted only together with `allowInsecureDevelopment: true`, and every HTTP OIDC/key-binding/provider endpoint must use this exact origin. Never ship it in a production profile. |
 | `brand` | yes | Bounded presentational values. |
 | `oidc` | yes | OIDC public-client facts. |
-| `keyBinding` | yes | Key Binding base URL only. |
+| `keyBinding` | yes | Key Binding base URL and optional local DSH credential reference. |
 | `provider` | yes | One local OpenAI-compatible Provider route and model list. |
 
 ## Branding
@@ -77,16 +77,22 @@ The Web redirect URI is fixed to `http://127.0.0.1:<DSH-port>/oauth/callback`. T
 ## Key Binding object
 
 ```json
-{ "baseURL": "https://ai.example.edu/api/worker/v1" }
+{
+  "baseURL": "https://ai.example.edu/api/worker/v1",
+  "credentialRef": "EXAMPLE_AI_TEST_API_KEY"
+}
 ```
 
-This is the only accepted field. The parser derives:
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `baseURL` | yes | Base URL of the `worker-user-center-v1` Key Binding interface group. |
+| `credentialRef` | no | Local DSH Credential Provider name under which the bound model API key is stored. It must match `^[A-Za-z_][A-Za-z0-9_]*$` and is limited to 128 characters. |
 
-- protocol type: `worker-user-center-v1`;
-- Provider ID: `provider.id`;
-- credential reference: uppercase Provider ID with non-alphanumerics replaced by `_`, followed by `_API_KEY`.
+The protocol type is fixed to `worker-user-center-v1`, and the Provider ID sent on the wire is always `provider.id`. When `credentialRef` is omitted, the parser preserves the backward-compatible default: uppercase the Provider ID, replace non-alphanumerics with `_`, and append `_API_KEY`. For example, `example-ai` defaults to `EXAMPLE_AI_API_KEY`.
 
-Endpoint paths and JSON field mappings are protocol facts and MUST NOT be customized by profiles.
+`credentialRef` is only the name of a local secret-store entry. It is not an API key and is never sent to OIDC, Key Binding, or the model service. A normal single-environment deployment SHOULD omit it. Deployments that reuse one Provider ID across production and test MUST configure distinct references, for example `EXAMPLE_AI_API_KEY` and `EXAMPLE_AI_TEST_API_KEY`, so one environment cannot resolve another environment's key.
+
+Endpoint paths, request/response fields, and Provider ID semantics are protocol facts and MUST NOT be customized by profiles. If a native host returns `runtimeCredentialRef`, it MUST equal the normalized profile value or the plugin fails closed.
 
 ## Provider object
 
@@ -94,7 +100,7 @@ The Provider object is data interpreted by a local audited adapter.
 
 | Field | Required | Meaning |
 | --- | --- | --- |
-| `id` | yes | DSH route ID and credential-reference source. Must be unique across loaded profiles. |
+| `id` | yes | DSH route ID and source of the default credential reference. Must be unique across loaded profiles. |
 | `displayName` | no | User-facing Provider name. |
 | `adapter` | yes | Exact string `openai-compatible`. |
 | `baseURL` | yes | HTTPS OpenAI-compatible API base. |

@@ -11,7 +11,7 @@ const allowedRootKeys = new Set([
   'allowInsecureDevelopment', 'insecureDevelopmentOrigin', 'brand', 'oidc', 'keyBinding', 'provider',
 ])
 const allowedOidcKeys = new Set(['issuer', 'clientId', 'scopes'])
-const allowedKeyBindingKeys = new Set(['baseURL'])
+const allowedKeyBindingKeys = new Set(['baseURL', 'credentialRef'])
 const allowedBrandKeys = new Set([
   'productName', 'organizationName', 'mark', 'logoURL', 'primaryColor',
   'loginTitle', 'loginDescription', 'supportURL',
@@ -259,8 +259,12 @@ export function normalizeEnterpriseProfile(raw) {
   exactKeys(provider, allowedProviderKeys, 'profile.provider')
   const providerID = text(provider.id, 'profile.provider.id', 64)
   if (!idPattern.test(providerID)) throw new Error('profile.provider.id is invalid')
-  const credentialRef = providerCredentialRef(providerID)
-  if (!credentialPattern.test(credentialRef)) throw new Error('derived DSH credential reference is invalid')
+  const credentialRef = keyBinding.credentialRef === undefined
+    ? providerCredentialRef(providerID)
+    : text(keyBinding.credentialRef, 'profile.keyBinding.credentialRef', 128)
+  if (!credentialPattern.test(credentialRef)) {
+    throw new Error('profile.keyBinding.credentialRef must be a valid DSH credential reference')
+  }
   if (provider.adapter !== 'openai-compatible') throw new Error(`unsupported provider adapter ${String(provider.adapter)}`)
   const scopes = oidc.scopes
   if (!Array.isArray(scopes) || scopes.length < 2 || scopes.length > 64 || !scopes.includes('openid') || !scopes.includes('profile') || scopes.some(scope => typeof scope !== 'string' || scope.length > 128 || scope.trim() !== scope || scope === '' || /\s/.test(scope))) {
@@ -335,7 +339,10 @@ export function enterpriseProfileFromInstitution(institution) {
     ...(institution.insecureDevelopmentOrigin === undefined ? {} : { insecureDevelopmentOrigin: institution.insecureDevelopmentOrigin }),
     brand: institution.brand ?? {},
     oidc: { issuer: baseURL, clientId: institution.publicClientID, scopes: institution.scopes },
-    keyBinding: { baseURL: `${baseURL}/api/worker/v1` },
+    keyBinding: {
+      baseURL: `${baseURL}/api/worker/v1`,
+      ...(institution.runtimeCredentialRef === undefined ? {} : { credentialRef: institution.runtimeCredentialRef }),
+    },
     provider: {
       id: institution.runtimeProviderID,
       displayName: institution.runtime?.displayName ?? institution.displayName,

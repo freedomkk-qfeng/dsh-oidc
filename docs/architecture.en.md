@@ -50,7 +50,7 @@ sequenceDiagram
   B->>D: User confirms provisioning
   D->>K: POST /runtime-credential/provision
   K-->>D: api_key
-  D->>C: Store derived Provider credential reference
+  D->>C: Store API key under the Profile credential reference
   B->>L: Start model request
   L->>C: Resolve runtime API key
   L->>M: OpenAI-compatible streaming request
@@ -83,13 +83,15 @@ OIDC is the only authentication and identity source in the Web backend, which st
 
 ## Credential boundary
 
-The Key Binding service returns the model API key exactly once per resolve/provision/renew response. `dsh-oidc` writes it under a deterministic DSH credential reference derived from Provider ID:
+The Key Binding service returns the model API key exactly once per resolve/provision/renew response. `dsh-oidc` writes it under the normalized Enterprise Profile credential reference. The default remains deterministically derived from Provider ID:
 
 ```text
 example-ai -> EXAMPLE_AI_API_KEY
 ```
 
-The Provider adapter resolves that reference at request time. It never reads an ambient pi-ai credential store and never places the key in the Enterprise Profile, UI payload, logs, or DSH transcript.
+Production and test may retain the same Provider ID and wire-level `provider_id` while explicitly using different `keyBinding.credentialRef` values in their respective trusted Profiles. This separates local secret namespaces without changing the server protocol.
+
+The Provider adapter resolves that reference at request time. It never reads an ambient pi-ai credential store and never places the key in the Enterprise Profile, UI payload, logs, or DSH transcript. Web and native backends follow the same Profile rule. Native `enterpriseAccounts` is only a host capability adapter; it does not own credential naming, and a conflicting reference is rejected.
 
 Credential storage security is delegated to the active DSH Credential Provider. That is an explicit host contract, not proof that every DSH deployment is multi-user safe.
 

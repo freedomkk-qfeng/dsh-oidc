@@ -90,7 +90,10 @@
       "type": "object",
       "additionalProperties": false,
       "required": ["baseURL"],
-      "properties": { "baseURL": { "$ref": "#/$defs/endpointURL" } }
+      "properties": {
+        "baseURL": { "$ref": "#/$defs/endpointURL" },
+        "credentialRef": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$", "maxLength": 128 }
+      }
     },
     "compat": {
       "type": "object",

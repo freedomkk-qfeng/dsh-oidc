@@ -55,9 +55,10 @@
 
 - 使用 OIDC public client，不使用 client secret。
 - Session 和 API Key 只通过 DSH Credential Provider 写入。
-- 模型 adapter 在请求时解析确定性的凭据引用。
+- 模型 adapter 在请求时解析 Profile 规范化后的凭据引用；未配置时才按 Provider ID 确定性派生。
 - 独立空 pi-ai auth store 防止环境凭据遮蔽已绑定 Key。
 - 凭据响应必须精确匹配 Provider ID。
+- Native 宿主报告的凭据引用必须与 Profile 一致，防止生产/测试环境交叉取 Key。
 - 退出登录会清除本地会话和模型 Key。
 
 ## 宿主假设

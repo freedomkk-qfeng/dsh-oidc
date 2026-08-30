@@ -55,9 +55,10 @@ The same institution may operate boundaries 2–4, but they remain separate prot
 
 - Public OIDC client; no client secret.
 - Session and API key written only through DSH Credential Provider.
-- Model adapter resolves the deterministic credential reference at request time.
+- The model adapter resolves the normalized Profile credential reference at request time; deterministic Provider-ID derivation is only the default when none is configured.
 - Separate empty pi-ai auth store prevents ambient credentials shadowing the bound key.
 - Credential response requires exact Provider ID.
+- A native host's reported credential reference must match the Profile, preventing production/test cross-resolution.
 - Logout clears both local session and model key.
 
 ## Host assumptions

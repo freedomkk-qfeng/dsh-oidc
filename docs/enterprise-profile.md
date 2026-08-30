@@ -18,7 +18,7 @@ Profile 是受信任的部署配置，不是用户输入。即便如此，解析
 - 只有显式 loopback 主机可以在开发环境使用 HTTP；
 - 拒绝 URL 凭据、fragment 和 endpoint-base query string；
 - 只能选择内置的 `openai-compatible` adapter；
-- Key Binding 只接受 `baseURL`；
+- Key Binding 只接受协议基址和可选的本地 DSH 凭据引用，不能改写网络路径或字段；
 - logo data URL 只接受 PNG/WebP，不接受 SVG。
 
 远程管理系统只有在宿主能够认证来源、校验完整性并通过审查流程暂存变更时，才可以分发 Profile JSON。下载的 JSON 不会仅仅因为不包含 JavaScript 就自动变得安全。
@@ -36,7 +36,7 @@ Profile 是受信任的部署配置，不是用户输入。即便如此，解析
 | `insecureDevelopmentOrigin` | 否 | 精确的非 TLS 开发 origin。只有与 `allowInsecureDevelopment: true` 一起使用时才有效，且所有 HTTP OIDC/Key Binding/Provider endpoint 必须使用该 origin。不得放入生产 Profile。 |
 | `brand` | 是 | 有边界的展示配置。 |
 | `oidc` | 是 | OIDC public client 配置事实。 |
-| `keyBinding` | 是 | 仅包含 Key Binding 基础 URL。 |
+| `keyBinding` | 是 | Key Binding 基础 URL，以及可选的本地 DSH 凭据引用。 |
 | `provider` | 是 | 一个本地 OpenAI-compatible Provider 路由和模型列表。 |
 
 ## 品牌替换
@@ -77,16 +77,22 @@ Web 重定向地址固定为 `http://127.0.0.1:<DSH端口>/oauth/callback`。hos
 ## Key Binding 对象
 
 ```json
-{ "baseURL": "https://ai.example.edu/api/worker/v1" }
+{
+  "baseURL": "https://ai.example.edu/api/worker/v1",
+  "credentialRef": "EXAMPLE_AI_TEST_API_KEY"
+}
 ```
 
-这是唯一允许的字段。解析器会派生：
+| 字段 | 必需 | 含义 |
+| --- | --- | --- |
+| `baseURL` | 是 | `worker-user-center-v1` Key Binding 接口组的基址。 |
+| `credentialRef` | 否 | 保存绑定后模型 API Key 的本地 DSH Credential Provider 名称。必须匹配 `^[A-Za-z_][A-Za-z0-9_]*$`，最长 128 字符。 |
 
-- 协议类型：`worker-user-center-v1`；
-- Provider ID：`provider.id`；
-- 凭据引用：将 Provider ID 转为大写、把非字母数字替换为 `_`，再追加 `_API_KEY`。
+协议类型固定为 `worker-user-center-v1`，请求中的 Provider ID 固定取 `provider.id`。如果省略 `credentialRef`，解析器保持向后兼容：将 Provider ID 转为大写、把非字母数字替换为 `_`，再追加 `_API_KEY`。例如 `example-ai` 默认对应 `EXAMPLE_AI_API_KEY`。
 
-Endpoint 路径和 JSON 字段映射属于协议事实，不得由 Profile 自定义。
+`credentialRef` 只是本地秘密存储的引用名，不是 API Key，不发送给 OIDC、Key Binding 或模型服务。普通单环境部署应该省略它并使用默认值；同一 Provider ID 在生产和测试部署间复用时，必须为不同环境配置不同引用，例如 `CHATECNU_API_KEY` 与 `CHATECNU_QUOTA_TEST_API_KEY`，避免一个环境读取另一环境的 Key。
+
+Endpoint 路径、请求/响应字段和 Provider ID 语义属于协议事实，不得由 Profile 自定义。Native 宿主若返回 `runtimeCredentialRef`，其值必须与本字段规范化后的结果一致，否则插件失败关闭。
 
 ## Provider 对象
 
@@ -94,7 +100,7 @@ Provider 对象是由本地、经过审查的 adapter 解释的数据。
 
 | 字段 | 必需 | 含义 |
 | --- | --- | --- |
-| `id` | 是 | DSH 路由 ID 和凭据引用来源；在所有已加载 Profile 中必须唯一。 |
+| `id` | 是 | DSH 路由 ID，也是默认凭据引用的来源；在所有已加载 Profile 中必须唯一。 |
 | `displayName` | 否 | 面向用户的 Provider 名称。 |
 | `adapter` | 是 | 精确字符串 `openai-compatible`。 |
 | `baseURL` | 是 | HTTPS OpenAI-compatible API 基址。 |

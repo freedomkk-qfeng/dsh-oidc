@@ -50,7 +50,7 @@ sequenceDiagram
   B->>D: 用户确认创建凭据
   D->>K: POST /runtime-credential/provision
   K-->>D: api_key
-  D->>C: 保存派生的 Provider 凭据引用
+  D->>C: 按 Profile 凭据引用保存 API Key
   B->>L: 发起模型请求
   L->>C: 解析运行时 API Key
   L->>M: OpenAI-compatible 流式请求
@@ -83,13 +83,15 @@ Web 后端只以 OIDC 作为认证和身份来源，并只在 DSH WebServer 精�
 
 ## 凭据边界
 
-Key Binding 服务在每次 resolve/provision/renew 响应中返回模型 API Key。`dsh-oidc` 将其写入由 Provider ID 确定性派生的 DSH 凭据引用：
+Key Binding 服务在每次 resolve/provision/renew 响应中返回模型 API Key。`dsh-oidc` 将其写入 Enterprise Profile 解析后的 DSH 凭据引用。默认值仍由 Provider ID 确定性派生：
 
 ```text
 example-ai -> EXAMPLE_AI_API_KEY
 ```
 
-Provider adapter 在请求时解析该引用。它不会读取环境中的 pi-ai 凭据存储，也不会把密钥放入 Enterprise Profile、UI payload、日志或 DSH 对话记录。
+生产与测试可以保持相同的 Provider ID 和服务端 `provider_id`，同时在各自受信任的 Profile 中显式使用不同的 `keyBinding.credentialRef`。这只隔离本地秘密命名空间，不改变服务端协议。
+
+Provider adapter 在请求时解析该引用。它不会读取环境中的 pi-ai 凭据存储，也不会把密钥放入 Enterprise Profile、UI payload、日志或 DSH 对话记录。Web 后端和 native 后端使用同一 Profile 规则；native `enterpriseAccounts` 只是宿主能力适配器，不拥有凭据命名策略，若返回不一致的引用会被拒绝。
 
 凭据存储安全性委托给当前 DSH Credential Provider。这是一项明确的宿主契约，并不意味着任意 DSH 部署都天然具备多用户安全性。
 

@@ -26,7 +26,8 @@
     ]
   },
   "keyBinding": {
-    "baseURL": "https://worker.example.edu/api/worker/v1"
+    "baseURL": "https://worker.example.edu/api/worker/v1",
+    "credentialRef": "CHATECNU_API_KEY"
   },
   "provider": {
     "id": "chatecnu",
