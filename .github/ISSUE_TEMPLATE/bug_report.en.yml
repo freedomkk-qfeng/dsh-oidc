@@ -1,0 +1,43 @@
+name: Bug report (English)
+description: Report a reproducible non-security defect
+title: "[Bug] "
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include tokens, keys, cookies, personal data, production profiles, or private endpoints. Use SECURITY.en.md for vulnerabilities.
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: dsh-oidc, DSH, Node.js, and pi-ai versions
+    validations: { required: true }
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Backend
+      options: [Web, Native]
+    validations: { required: true }
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Minimal steps and sanitized Profile/log excerpts
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: Expected behavior }
+    validations: { required: true }
+  - type: textarea
+    id: actual
+    attributes: { label: Actual behavior }
+    validations: { required: true }
+  - type: checkboxes
+    id: hygiene
+    attributes:
+      label: Data hygiene
+      options:
+        - label: I removed all secrets, personal data, and production-only identifiers/endpoints.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true

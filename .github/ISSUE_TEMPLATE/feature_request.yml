@@ -1,0 +1,20 @@
+name: 功能建议
+description: 提议一项可互操作、边界清楚的增强
+title: "[Feature] "
+labels: [enhancement, triage]
+body:
+  - type: textarea
+    id: problem
+    attributes: { label: 问题, description: 请描述用户或集成问题，不要只给出一个 API 方案。 }
+    validations: { required: true }
+  - type: textarea
+    id: boundary
+    attributes: { label: 建议边界, description: 这属于 OIDC、Key Binding、Profile 数据、DSH 集成，还是具体产品能力？ }
+    validations: { required: true }
+  - type: textarea
+    id: standards
+    attributes: { label: 相关标准或 DSH 能力 }
+  - type: textarea
+    id: security
+    attributes: { label: 安全与兼容性影响 }
+    validations: { required: true }

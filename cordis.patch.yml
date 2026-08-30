@@ -1,0 +1,8 @@
+# Default Web-first DSH bundle entry. Installing a local checkout with
+# `dsh plugin --profile web add .` appends this layer to the ordinary official
+# Web profile. Deployment facts remain outside the package source.
+- insert:
+    - id: enterprise-oidc
+      name: dsh-oidc
+      config:
+        profilePathEnv: DSH_OIDC_ENTERPRISE_PROFILE

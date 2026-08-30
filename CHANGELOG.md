@@ -1,0 +1,90 @@
+# 变更日志
+
+**简体中文** | [English](CHANGELOG.en.md)
+
+所有重要变更均记录于此。格式遵循 Keep a Changelog 原则；项目使用语义化版本，并遵循[兼容性与发布策略](docs/compatibility.md)中对 1.0 之前版本的说明。
+
+## [未发布]
+
+### 新增
+
+- 增加中英文[机构服务端完整接入契约](docs/server-integration-contract.md)，明确 OIDC + PKCE、Key Binding 和模型网关是同一机构服务必须共同交付的完整能力。
+- 中英文文档默认入口、公开仓库地址、维护者和私密安全报告入口完成开源化整理。
+
+### 变更
+
+- Web 回调固定为 `http://127.0.0.1:<DSH端口>/oauth/callback`，不再接受公网 `publicBaseURL` 或非 `127.0.0.1` 的 DSH WebServer。
+- 示例与测试只使用保留文档地址，公开主分支不继承内部开发提交历史。
+
+## [0.1.0-alpha.7] - 2026-08-30
+
+### 新增
+
+- 仅限开发环境的网络 HTTP 部署可以显式允许一个精确 `insecureDevelopmentOrigin`；默认仍强制 HTTPS，loopback 开发行为不变。
+
+## [0.1.0-alpha.6] - 2026-08-29
+
+### 变更
+
+- 兼容基线更新至 DeepSeek Harness `0.1.2-alpha.1`，并用公开 renderer/session 时代软件包替换已移除的 Client runtime peer。
+- 企业模型管理现在通过官方 `settings.models.footer` 扩展上游“模型”页面；产品不再需要 fork 完整模型设置页。
+- 通过源码 release-pack Runtime 审查 pi-ai `0.84.4`，同时保留兼容的 `^0.84.2` peer 范围。
+
+## [0.1.0-alpha.5] - 2026-08-26
+
+### 变更
+
+- 在仓库所有权确定前，安装文档改为从经过审查的本地 Git checkout 开始，并使用 GitHub 组织占位符。
+- 明确本地路径安装会把 checkout 链接进 DSH Profile，不会扫描当前工作区，并要求 checkout 持续存在。
+- Registry 安装只作为 npm 版本经过审查并发布后的未来路径。
+
+## [0.1.0-alpha.4] - 2026-08-26
+
+### 新增
+
+- 通过包自带的 Web-first `cordis.patch.yml`，支持 `dsh plugin --profile web add dsh-oidc` 直接安装 DSH Bundle。
+- 完整中英文第三方接入指南，覆盖 OIDC 注册、Key Binding 实现、Enterprise Profile、Web/native 组合、生产验收和排障。
+
+### 变更
+
+- 可发布 npm tarball 现在包含无需仓库 checkout 即可部署插件所需的协议和部署文档。
+
+## [0.1.0-alpha.3] - 2026-08-25
+
+### 新增
+
+- Web 与 native DSH 组合共用、可感知能力的企业 Provider/模型设置组件，通过 DSH 官方 `settings.section` 扩展点注册。
+- 版本化 `dsh-oidc/management/v1alpha1` 浏览器投影，以及可选 native 新增、切换、模型编辑和重启操作。
+- `models-only` UI 模式，使桌面产品在保留独立账号、配额、更新和诊断界面的同时继承共用模型设置。
+
+### 变更
+
+- 纯 Web 现在通过与 Desktop 相同的 Provider/模型 UI 展示受信任 Enterprise Profile，并隐藏修改操作。
+- 已认证但仍缺少运行凭据的账号会显示明确“确认并连接”操作，而不是重复 OIDC 登录。
+
+## [0.1.0-alpha.2] - 2026-08-25
+
+### 变更
+
+- 账号界面显示标准 OIDC UserInfo `name`，缺失时降级到 `sub`；机构品牌仍作为次要上下文。
+- Native desktop adapter 应提供与 Web 后端相同的 `userName` 身份契约；私有管理面 bootstrap 数据不得替换 OIDC 身份。
+
+## [0.1.0-alpha.1] - 2026-08-25
+
+### 新增
+
+- 独立 `dsh-oidc` 软件包，不依赖 ChatECNU 私有包。
+- OIDC Authorization Code + PKCE Web 后端和 native 账号 adapter。
+- 标准 UserInfo 身份（`name`，降级 `sub`）和 subject 绑定。
+- 固定 `worker-user-center-v1` Key Binding 客户端和 OpenAPI 契约。
+- 声明式 Enterprise Profile JSON Schema、品牌替换、Provider/模型目录和 ECNU 占位示例。
+- 本地 DSH/PiAi OpenAI-compatible Provider adapter 和 `enterpriseTransforms` 扩展点。
+- 中英文账号 UI 降级文案。
+- 安全、治理、贡献、兼容、发布和第三方文档。
+
+### 安全
+
+- 精确 callback/public-origin 处理、同源 return path 和重复 callback 参数拒绝。
+- 多 audience `azp`、JWK 元数据/唯一性、必需时间 claim、可选 `at_hash` 和 UserInfo subject 校验。
+- 支持跨 origin HTTPS Discovery endpoint；HTTP 仅限 loopback 开发环境。
+- 限制 Profile 和网络响应大小，严格拒绝未知字段和 SVG data logo。

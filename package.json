@@ -1,0 +1,117 @@
+{
+  "name": "dsh-oidc",
+  "version": "0.1.0-alpha.7",
+  "description": "Standards-based OIDC identity, enterprise API-key binding, declarative branding, and OpenAI-compatible model integration for DeepSeek Harness",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "oidc",
+    "openid-connect",
+    "enterprise",
+    "sso"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./profile": "./lib/profile.js",
+    "./oidc": "./lib/oidc.js",
+    "./provider": "./lib/provider/index.js",
+    "./transforms": "./lib/provider/transforms.js",
+    "./typert": "./lib/typert.host.js",
+    "./remote": "./lib/typert.remote-client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "cordis.patch.yml",
+    "lib/**/*.js",
+    "docs/**/*.md",
+    "examples/**/*.json",
+    "schema/**/*.json",
+    "protocol/openapi.yaml",
+    "README.md",
+    "README.en.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "THIRD_PARTY_NOTICES.en.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-settings-models",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-theme"
+      ],
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "scripts": {
+    "build:host": "node scripts/build-host.mjs",
+    "build:client": "tsdown",
+    "build": "npm run build:host && npm run build:client",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage",
+    "check:schemas": "node scripts/check-schemas.mjs",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "check:licenses": "node scripts/check-licenses.mjs",
+    "check:docs": "node scripts/check-doc-links.mjs",
+    "check:build": "node scripts/smoke-build.mjs",
+    "check": "npm run typecheck && npm run build && npm run check:build && npm test && npm run check:schemas && npm run check:docs && npm run check:secrets && npm run check:licenses && npm pack --dry-run",
+    "prepare": "npm run build"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/freedomkk-qfeng/dsh-oidc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/freedomkk-qfeng/dsh-oidc/issues"
+  },
+  "homepage": "https://github.com/freedomkk-qfeng/dsh-oidc#readme",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "4.4.3"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.1",
+    "@deepseek-ai/dsh-api-remotes": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-client-ui-renderer": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-client-ui-conversation": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-client-ui-settings": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-client-ui-settings-models": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-client-ui-sidebar": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-client-ui-theme": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-credentials": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-host-webserver": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-launch-environment": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-llm": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-llm-pi-ai": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-settings": "0.1.2-alpha.1",
+    "@deepseek-ai/dsh-typert-protocol": "0.1.2-alpha.1",
+    "@earendil-works/pi-ai": "^0.84.2",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.28",
+    "ajv": "^8.17.1",
+    "tsdown": "0.22.14",
+    "typescript": "^5.9.3",
+    "yaml": "^2.8.1"
+  }
+}
