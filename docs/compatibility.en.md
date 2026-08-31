@@ -6,6 +6,7 @@
 
 | dsh-oidc | Node.js | DSH | pi-ai | Status |
 | --- | --- | --- | --- | --- |
+| `0.1.0-alpha.10` | 22, 24 | `0.1.2-alpha.2` / `0a53fb55…` | `^0.84.2` (`0.84.4` in npm/source Runtimes) | Migrated to `SettingsProvider.installSection()`; full checks pass through both npm and source release-pack paths. |
 | `0.1.0-alpha.9` | 22, 24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2` (`0.84.4` in the reviewed source Runtime) | Web and native consume only standard Enterprise Profiles; product institution-catalog conversion is completely outside the plugin. |
 | `0.1.0-alpha.8` | 22, 24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2` (`0.84.4` in the reviewed source Runtime) | Shared Web/native Profile credential-reference rule, production/test local-key isolation, and fail-closed native mismatch handling. |
 | `0.1.0-alpha.7` | 22, 24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2` (`0.84.4` in the reviewed source Runtime) | An exact network HTTP origin may be allowed for development; production remains HTTPS-only. |

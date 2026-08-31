@@ -6,6 +6,14 @@
 
 ## [未发布]
 
+## [0.1.0-alpha.10] - 2026-08-31
+
+### 变更
+
+- 兼容基线更新至 DeepSeek Harness `0.1.2-alpha.2`（`0a53fb55…`）与 `@deepseek-ai/cordis` `4.0.2`。
+- Provider 设置接入迁移到 alpha.2 官方 `SettingsProvider.installSection()`；不再依赖已删除的 `installSettingsSection` 与 `settingsNamespace` 顶层导出。
+- npm 与锁定源码 release-pack 两种 DSH Runtime 均完成构建、单元测试、协议/文档/敏感信息和发布内容检查。
+
 ## [0.1.0-alpha.9] - 2026-08-31
 
 ### 变更

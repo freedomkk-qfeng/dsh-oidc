@@ -6,7 +6,7 @@
 
 ## Runtime peers (not copied into this repository)
 
-- DeepSeek Harness packages `0.1.2-alpha.1` and `@deepseek-ai/cordis` `4.0.1` — MIT, Copyright (c) 2026 DeepSeek, <https://github.com/deepseek-ai/deepseek-harness>
+- DeepSeek Harness packages `0.1.2-alpha.2` and `@deepseek-ai/cordis` `4.0.2` — MIT, Copyright (c) 2026 DeepSeek, <https://github.com/deepseek-ai/deepseek-harness>
 - `@earendil-works/pi-ai` `^0.84.2` (`0.84.4` in the reviewed source Runtime) — MIT, <https://github.com/earendil-works/pi>
 - React `18.x` — MIT, Copyright (c) Facebook, Inc. and its affiliates, <https://github.com/facebook/react>
 

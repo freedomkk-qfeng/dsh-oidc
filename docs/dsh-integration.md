@@ -4,7 +4,7 @@
 
 ## 支持的宿主基线
 
-当前兼容基线为 DeepSeek Harness `0.1.2-alpha.1`，上游 commit `cd5ef8148158c3a752a658978873241fdf8e2bbc`。DSH 仍处于预发布阶段，因此 peer version 使用精确版本。
+当前兼容基线为 DeepSeek Harness `0.1.2-alpha.2`，上游 commit `0a53fb55bea101816fa226bb964ae2bed71c343b`。DSH 仍处于预发布阶段，因此 peer version 使用精确版本。
 
 插件只使用公开 package export，不复制 DSH 源码：
 

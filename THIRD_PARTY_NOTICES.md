@@ -6,7 +6,7 @@
 
 ## 运行时 Peer（源码未复制进本仓库）
 
-- DeepSeek Harness `0.1.2-alpha.1` 软件包和 `@deepseek-ai/cordis` `4.0.1`——MIT，Copyright (c) 2026 DeepSeek，<https://github.com/deepseek-ai/deepseek-harness>
+- DeepSeek Harness `0.1.2-alpha.2` 软件包和 `@deepseek-ai/cordis` `4.0.2`——MIT，Copyright (c) 2026 DeepSeek，<https://github.com/deepseek-ai/deepseek-harness>
 - `@earendil-works/pi-ai` `^0.84.2`（已审查源码 Runtime 中为 `0.84.4`）——MIT，<https://github.com/earendil-works/pi>
 - React `18.x`——MIT，Copyright (c) Facebook, Inc. and its affiliates，<https://github.com/facebook/react>
 

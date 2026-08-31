@@ -13,7 +13,7 @@
 
 插件 Web 优先，不依赖 Wails。桌面产品可以切换到 native account backend，但 Enterprise Profile、Provider 路由、前端账号契约和 Key Binding 语义不变。
 
-> **当前状态：alpha。** 当前源码已适配 DSH `0.1.2-alpha.1`（提交 `cd5ef814…`），并可在官方源码 release-pack Runtime 中完成构建与集成测试；Enterprise Profile 仍为 `v1alpha1`。在对应 DSH npm 包发布前，请按源码兼容流程验收，不要用旧版 npm 包替代。正式生产前仍必须完成真实 OIDC/Key Binding 联调、宿主凭据隔离审计和 DSH 升级兼容性测试。
+> **当前状态：alpha。** 当前源码已适配 DSH `0.1.2-alpha.2`（提交 `0a53fb55…`），并在官方 npm Runtime 与锁定源码 release-pack Runtime 中完成构建和集成检查；Enterprise Profile 仍为 `v1alpha1`。正式生产前仍必须完成真实 OIDC/Key Binding 联调、宿主凭据隔离审计和 DSH 升级兼容性测试。
 
 准备接入自己的机构？先读 **[服务端接口规范](docs/server-integration-contract.md)**，再按 **[完整中文接入指南](docs/getting-started.md)** 部署。前者以请求、响应、字段和错误码形式定义一个机构服务必须共同实现的 OIDC + PKCE、Key Binding 和模型网关能力；后者覆盖配置、安装、验收和排障。
 

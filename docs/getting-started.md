@@ -16,7 +16,7 @@
 
 | 组件 | 谁提供 | 最低要求 |
 | --- | --- | --- |
-| DSH Host | 部署方 | DeepSeek Harness `0.1.2-alpha.1`，Node.js 22+。 |
+| DSH Host | 部署方 | DeepSeek Harness `0.1.2-alpha.2`，Node.js 22+。 |
 | 机构企业模型集成服务 | 同一服务所有者 | 共同提供 OIDC Provider、固定 Key Binding 和 OpenAI-compatible 模型网关；三者全部必需。 |
 | Enterprise Profile | 部署方 | 一份受信任的本地 JSON，只存公开配置，不存密钥或个人信息。 |
 | Credential Provider | DSH Host | 当前 Web backend 仅支持可信单用户本机存储。 |
@@ -230,4 +230,4 @@ native backend 必须提供 `enterpriseAccounts` 服务，并与 Web 一样传�
 
 ### 为什么企业服务是单独的设置页
 
-当前 DSH `0.1.2-alpha.1` 已提供正式的 `settings.models.footer` 插槽。插件直接把企业模型管理能力挂载到官方“模型”页，并保持官方模型页启用，不再依赖产品私有的模型页 fork。
+当前 DSH `0.1.2-alpha.2` 已提供正式的 `settings.models.footer` 插槽。插件直接把企业模型管理能力挂载到官方“模型”页，并保持官方模型页启用，不再依赖产品私有的模型页 fork。

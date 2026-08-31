@@ -6,6 +6,14 @@ All notable changes are documented here. The format follows Keep a Changelog pri
 
 ## [Unreleased]
 
+## [0.1.0-alpha.10] - 2026-08-31
+
+### Changed
+
+- Updated the compatibility baseline to DeepSeek Harness `0.1.2-alpha.2` (`0a53fb55…`) and `@deepseek-ai/cordis` `4.0.2`.
+- Migrated Provider settings integration to alpha.2's official `SettingsProvider.installSection()` API and removed reliance on the retired top-level `installSettingsSection` and `settingsNamespace` exports.
+- Completed build, unit, protocol, documentation, secret, and publish-content checks against both the npm and locked source release-pack DSH Runtimes.
+
 ## [0.1.0-alpha.9] - 2026-08-31
 
 ### Changed

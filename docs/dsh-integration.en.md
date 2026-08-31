@@ -4,7 +4,7 @@
 
 ## Supported host baseline
 
-The current compatibility baseline is DeepSeek Harness `0.1.2-alpha.1`, upstream commit `cd5ef8148158c3a752a658978873241fdf8e2bbc`. Peer versions are exact while DSH remains prerelease software.
+The current compatibility baseline is DeepSeek Harness `0.1.2-alpha.2`, upstream commit `0a53fb55bea101816fa226bb964ae2bed71c343b`. Peer versions are exact while DSH remains prerelease software.
 
 The plugin uses public package exports rather than copied DSH source:
 

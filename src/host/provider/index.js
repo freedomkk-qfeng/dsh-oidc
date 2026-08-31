@@ -1,7 +1,6 @@
 import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
 import { LlmError, assertUsableApiKey, resolveRetryPolicy } from '@deepseek-ai/dsh-llm'
 import { Config as PiAiConfig, PiAiAdapter } from '@deepseek-ai/dsh-llm-pi-ai'
-import { installSettingsSection, settingsNamespace } from '@deepseek-ai/dsh-settings'
 import { createProvider } from '@earendil-works/pi-ai'
 import { openAICompletionsApi } from '@earendil-works/pi-ai/api/openai-completions.lazy'
 import {
@@ -14,7 +13,19 @@ import { EnterpriseModelTransforms } from './transforms.js'
 
 export const name = 'dsh-oidc-provider'
 export const inject = ['llm']
-export const SETTINGS_NAMESPACE = settingsNamespace(ENTERPRISE_SETTINGS_NAMESPACE)
+export const SETTINGS_NAMESPACE = ENTERPRISE_SETTINGS_NAMESPACE
+
+function installEnterpriseSettings(ctx, rawConfig, hooks) {
+  ctx.inject(['settings'], (settingsCtx) => {
+    settingsCtx.settings.installSection(
+      ctx,
+      SETTINGS_NAMESPACE,
+      PiAiConfig,
+      settingsBase(rawConfig),
+      hooks,
+    )
+  })
+}
 
 function apiKeyAuth(displayName) {
   return {
@@ -106,7 +117,7 @@ export function apply(ctx, rawConfig = {}) {
   let directory = ctx.llm.registerConfigurableProviders(configurableEntries(profiles))
 
   if (rawConfig.settingsEnabled !== true) {
-    installSettingsSection(ctx, SETTINGS_NAMESPACE, PiAiConfig, settingsBase(rawConfig), { setSource() {}, onChange() {} })
+    installEnterpriseSettings(ctx, rawConfig, { setSource() {}, onChange() {} })
     return
   }
 
@@ -123,7 +134,7 @@ export function apply(ctx, rawConfig = {}) {
     }
   }
 
-  installSettingsSection(ctx, SETTINGS_NAMESPACE, PiAiConfig, settingsBase(rawConfig), {
+  installEnterpriseSettings(ctx, rawConfig, {
     setSource(source) { current = source },
     onChange() {
       try { refresh() }
