@@ -82,7 +82,13 @@ The current Web backend is intentionally limited to a trusted, single-user DSH p
 
 ## Install
 
-Until the first reviewed npm release is published, clone this repository and install from the local checkout:
+Install the reviewed, exact version from npm:
+
+```bash
+dsh plugin --profile web add dsh-oidc@0.1.0-alpha.10
+```
+
+For auditing, development, or testing unpublished changes, install from a local checkout instead:
 
 ```bash
 git clone https://github.com/freedomkk-qfeng/dsh-oidc.git
@@ -92,7 +98,7 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-This links the checkout into the DSH `web` Profile, so keep the source directory in place. After a reviewed npm release exists, use `dsh plugin --profile web add dsh-oidc@REVIEWED_VERSION` instead.
+The local-path form links the checkout into the DSH `web` Profile, so keep the source directory in place. Team deployments should prefer a reviewed, exact npm version; use `dsh-oidc@alpha` only when intentionally following alpha updates.
 
 Advanced products may instead add it explicitly to their own DSH bundle patch:
 

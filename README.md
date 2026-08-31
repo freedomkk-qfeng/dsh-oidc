@@ -19,7 +19,7 @@
 
 ## 为什么叫 `dsh-oidc`
 
-这个名字足够准确，也没有把 ECNU、Wails、某个模型网关或某种客户端形态绑进公共能力。仓库名与 npm 包名统一为 `dsh-oidc`；准备仓库时 npm 公共名称尚未被占用。
+这个名字足够准确，也没有把 ECNU、Wails、某个模型网关或某种客户端形态绑进公共能力。仓库名与 [npm 包名](https://www.npmjs.com/package/dsh-oidc)统一为 `dsh-oidc`。
 
 它的边界不是“登录结束”，而是“一套能闭环的企业模型接入标准”：
 
@@ -63,7 +63,13 @@
 1. 按[服务端接口规范](docs/server-integration-contract.md)联合提供 OIDC、Key Binding 和模型网关。
 2. 为无 Client Secret 的 Public Client 精确登记 `http://127.0.0.1:3080/oauth/callback`。
 3. 从 [`examples/enterprise-profile.example.json`](examples/enterprise-profile.example.json) 复制一份可信本地配置。
-4. clone 本仓库并从本地 checkout 安装：
+4. 从 npm 安装经过复核的精确版本：
+
+```bash
+dsh plugin --profile web add dsh-oidc@0.1.0-alpha.10
+```
+
+需要审计、开发或测试尚未发布的改动时，也可以从本地 checkout 安装：
 
 ```bash
 git clone https://github.com/freedomkk-qfeng/dsh-oidc.git
@@ -73,7 +79,7 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-这会把当前 checkout 以本地依赖链接到 DSH `web` Profile；安装后不要移动或删除源码目录。未来 npm 正式发布后，才改用 `dsh plugin --profile web add dsh-oidc@REVIEWED_VERSION`。
+本地路径安装会把当前 checkout 以依赖链接到 DSH `web` Profile；安装后不要移动或删除源码目录。团队部署应优先固定经过复核的 npm 精确版本；需要主动跟随 alpha 更新时可以使用 `dsh-oidc@alpha`。
 
 高级产品也可以在自己的 DSH bundle 中显式引入 `dsh-oidc`：
 

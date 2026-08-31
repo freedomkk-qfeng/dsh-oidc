@@ -56,7 +56,13 @@ The client descriptor uses strict Zod codecs. Configuration sent to the browser 
 
 ### Direct installation
 
-`dsh-oidc` declares its own default Web-first Bundle patch. Before the public repository and npm package are approved, clone a reviewed local checkout and install it into the official Web profile without authoring a wrapper Bundle:
+`dsh-oidc` declares its own default Web-first Bundle patch. Install it directly from npm into the official Web profile without authoring a wrapper Bundle:
+
+```bash
+dsh plugin --profile web add dsh-oidc@0.1.0-alpha.10
+```
+
+For auditing, development, or validating unpublished changes, install a reviewed local checkout instead:
 
 ```bash
 git clone https://github.com/freedomkk-qfeng/dsh-oidc.git
@@ -66,7 +72,7 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-The local-path install links the checkout into the Profile, so the source directory must remain available. It does not scan the current workspace. After a reviewed npm publication, use `dsh plugin --profile web add dsh-oidc@REVIEWED_VERSION`.
+The local-path install links the checkout into the Profile, so the source directory must remain available. It does not scan the current workspace. Team deployments should prefer a reviewed, exact npm version; `dsh-oidc@alpha` is only for deployments that intentionally follow prerelease updates.
 
 The shipped patch mounts exactly one `enterprise-oidc` instance using `DSH_OIDC_ENTERPRISE_PROFILE`. The Web backend requires the DSH WebServer to listen exactly on `127.0.0.1` and builds the fixed `/oauth/callback` from its actual port; no public callback-origin setting is accepted. It deliberately does not set `agent-default-model`, because Provider and model IDs belong to the deployment's Enterprise Profile and users can select an available enterprise model in DSH.
 

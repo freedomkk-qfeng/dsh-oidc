@@ -56,7 +56,13 @@ Client 描述符使用严格 Zod codec。发送给浏览器的配置不包含 is
 
 ### 直接安装
 
-`dsh-oidc` 自带默认的 Web-first Bundle patch。在公开仓库和 npm 包获批前，请 clone 经过审查的本地 checkout，并直接安装到官方 Web Profile，无需再编写 wrapper Bundle：
+`dsh-oidc` 自带默认的 Web-first Bundle patch，可以直接从 npm 安装到官方 Web Profile，无需再编写 wrapper Bundle：
+
+```bash
+dsh plugin --profile web add dsh-oidc@0.1.0-alpha.10
+```
+
+需要审计、开发或验证尚未发布的改动时，可以安装经过审查的本地 checkout：
 
 ```bash
 git clone https://github.com/freedomkk-qfeng/dsh-oidc.git
@@ -66,7 +72,7 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-本地路径安装会把 checkout 链接到 Profile，因此源码目录必须持续存在。它不会扫描当前工作区。npm 发布经审查后，可改用 `dsh plugin --profile web add dsh-oidc@REVIEWED_VERSION`。
+本地路径安装会把 checkout 链接到 Profile，因此源码目录必须持续存在。它不会扫描当前工作区。团队部署应优先固定经过复核的 npm 精确版本；`dsh-oidc@alpha` 只适合明确希望跟随预发布更新的场景。
 
 随包 patch 使用 `DSH_OIDC_ENTERPRISE_PROFILE` 挂载且只挂载一个 `enterprise-oidc` 实例。Web backend 要求 DSH WebServer 精确监听 `127.0.0.1`，并从实际端口构造固定 `/oauth/callback`；不接受公网回调源配置。它有意不设置 `agent-default-model`，因为 Provider 和模型 ID 属于部署方 Enterprise Profile，用户可在 DSH 中选择可用企业模型。
 
