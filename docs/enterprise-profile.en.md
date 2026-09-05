@@ -104,7 +104,7 @@ The Provider object is data interpreted by a local audited adapter.
 | `displayName` | no | User-facing Provider name. |
 | `adapter` | yes | Exact string `openai-compatible`. |
 | `baseURL` | yes | HTTPS OpenAI-compatible API base. |
-| `reasoning` | no | Default DSH/pi-ai reasoning level, default `high`. |
+| `reasoning` | no | Default DSH/pi-ai reasoning level: `off`, `minimal`, `low`, `medium`, `high`, `xhigh`, or `max`; default `high`. |
 | `defaultContextWindow` | no | Positive safe integer, default 262144. |
 | `defaultMaxTokens` | no | Positive safe integer, default 32768. |
 | `maxRequestImageBytes` | no | Accumulated native-image request budget. |
@@ -128,7 +128,7 @@ Each model has:
 - `input` containing `text`, `image`, or both (default `text`);
 - optional positive `contextWindow` and `maxTokens`;
 - optional `reasoning` boolean;
-- optional `reasoningEfforts` object, or `false`;
+- optional `reasoningEfforts` object, or `false`; object keys are limited to `off`, `minimal`, `low`, `medium`, `high`, `xhigh`, and `max`, and only `off` may have a null wire value;
 - optional bounded `compat` overrides.
 
 If a model supports thinking but not selectable reasoning effort, set:

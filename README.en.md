@@ -1,6 +1,6 @@
 # dsh-oidc
 
-> npm package: `@eduwork/dsh-oidc@0.1.0-alpha.11`. The previous unscoped package remains available during migration. See [migration and data compatibility](docs/EDUWORK-MIGRATION.en.md).
+> npm package: `@eduwork/dsh-oidc@0.1.0`. The previous unscoped package and scoped alpha remain available during migration. See [migration and data compatibility](docs/EDUWORK-MIGRATION.en.md).
 
 [简体中文](README.md) | **English**
 
@@ -15,7 +15,7 @@ Standards-based enterprise identity and model integration for [DeepSeek Harness]
 
 The plugin is Web-first and has no Wails dependency. A desktop product can select the native account backend without changing the profile, Provider routes, UI contract, or Key Binding semantics.
 
-> **Status: alpha.** The code is usable for integration testing against DSH `0.1.2-alpha.2` through both the official npm Runtime and the locked source release-pack Runtime. The Enterprise Profile and Key Binding contracts are `v1alpha1`/`v1`. The Web backend is local single-user only; security review and compatibility tests remain required before production use.
+> **Current release: 0.1.0.** The source targets DSH `0.1.2-rc.1` exactly (commit `a66e4702…`) and locks and checks the complete DSH peer closure. The package has a stable version number, while the Enterprise Profile remains `v1alpha1`; real OIDC/Key Binding integration and host credential-isolation review are still required before production use.
 
 Integrating your own organization? Read the **[server API specification](docs/server-integration-contract.en.md)** first, then follow the **[getting-started guide](docs/getting-started.en.md)**. The first defines, with requests, responses, fields, and errors, the OIDC + PKCE, Key Binding, and model-gateway capabilities one institutional service must jointly deliver; the second covers configuration, installation, acceptance, and troubleshooting.
 
@@ -74,7 +74,7 @@ These values affect the document title, sidebar brand, conversation hero mark, l
 ## Requirements
 
 - Node.js 22 or newer;
-- DeepSeek Harness `0.1.2-alpha.2` packages listed as peers;
+- the exact DeepSeek Harness `0.1.2-rc.1` peer set;
 - an OIDC Public Client without a Client Secret that registers `http://127.0.0.1:3080/oauth/callback` exactly;
 - Discovery metadata with PKCE S256, RS256 ID Tokens, and `userinfo_endpoint`;
 - one institutional integration service implementing the complete [server contract](docs/server-integration-contract.en.md), including Key Binding and the model gateway;
@@ -87,7 +87,7 @@ The current Web backend is intentionally limited to a trusted, single-user DSH p
 Install the reviewed, exact version from npm:
 
 ```bash
-dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0
 ```
 
 For auditing, development, or testing unpublished changes, install from a local checkout instead:
@@ -100,7 +100,7 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-The local-path form links the checkout into the DSH `web` Profile, so keep the source directory in place. Team deployments should prefer a reviewed, exact npm version; use `@eduwork/dsh-oidc@alpha` only when intentionally following alpha updates.
+The local-path form links the checkout into the DSH `web` Profile, so keep the source directory in place. Team deployments should pin a reviewed, exact npm version and must not mix another DSH prerelease line into the same profile.
 
 Advanced products may instead add it explicitly to their own DSH bundle patch:
 
@@ -158,7 +158,7 @@ npm ci
 npm run check
 ```
 
-`npm run check` rebuilds both plugin faces, runs unit/security-contract tests, validates examples and OpenAPI structure, scans publishable sources for common secrets, personal paths, non-example addresses, and ECNU service endpoints, and inspects the npm tarball.
+`npm run check` verifies the DSH rc.1 Host, Client, Provider, WebServer, credentials, and Typert contracts; rebuilds both plugin faces; runs unit/security-contract tests; validates examples and OpenAPI structure; scans publishable sources for common secrets, personal paths, non-example addresses, and ECNU service endpoints; and inspects the npm tarball.
 
 The repository intentionally keeps Host code as native ESM under `src/host`; `scripts/build-host.mjs` copies it to `lib`. The DSH browser client is bundled as the loader-compatible `lib/client.js`.
 

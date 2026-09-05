@@ -2,7 +2,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import { extname, relative } from 'node:path'
 
 const root = new URL('../', import.meta.url)
-const ignored = new Set(['.git', 'node_modules', 'coverage', 'lib'])
+const ignored = new Set(['.git', 'node_modules', 'coverage', 'lib', 'dist'])
 const textExtensions = new Set(['', '.js', '.mjs', '.ts', '.json', '.md', '.yaml', '.yml', '.txt'])
 const findings = []
 const rules = [

@@ -6,6 +6,21 @@
 
 ## [未发布]
 
+## [0.1.0] - 2026-09-06
+
+### 变更
+
+- 兼容基线精确更新至 DeepSeek Harness `0.1.2-rc.1`（`a66e4702…`），不再声明支持未完成本轮验收的 alpha.2 组合。
+- 扩充并锁定 DSH peer 闭包，显式包含声明 `settings.general.item` 的页面包，避免 npm 在未锁定宿主中混装 alpha.2 与 rc.1。
+- 逐项核对 Credential Provider、Settings、LLM/Pi Provider、WebServer、API Remotes、Typert 和 Client 页面插槽；新增 `check:dsh` 自动契约检查。
+- Provider 配置只输出已声明字段，并复制为 rc.1 Settings/PiAi schema 可解析的可变数据；同时将 reasoning/compat 值域收紧到 rc.1 支持集合。
+- Settings section 增加可服务性校验，阻止 schema 虽可解析、但无法构造企业 Provider 的配置被持久化。
+- Provider 包装器补齐 `imageRequestPricing` 委托，并沿用 rc.1 官方附件到执行环境只读路径的解析链路。
+- 企业品牌单插槽使用显式负优先级覆盖 rc.1 官方品牌项，避免与默认优先级 0 冲突而中断 Client 初始化。
+- npm 包版本稳定为 `@eduwork/dsh-oidc@0.1.0`；保留 `dsh-oidc/v1alpha1`、`oidcAccounts`、凭据引用、Provider 标识、设置命名空间和用户数据。
+- CI 扩展为 Windows/Linux 上的 Node.js 22/24 矩阵，并增加默认只检查/打包、显式授权后才通过 npm Trusted Publishing 发布的手动工作流。
+- 文档链接和敏感信息检查显式忽略已被 Git 排除的 `dist/` 验收产物，避免本地缓存影响源码检查结果。
+
 ## [0.1.0-alpha.11] - 2026-09-05
 
 - npm 包身份改为 `@eduwork/dsh-oidc`，同步安装路径、组合模块路径与客户端注册。

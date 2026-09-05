@@ -1,0 +1,124 @@
+name: Release candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the checked tarball to npm
+        required: true
+        default: false
+        type: boolean
+      tag:
+        description: Existing release tag (required only when publishing, for example v0.1.0)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Check and package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the selected commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run the complete release check
+        run: npm run check
+      - name: Build the review tarball
+        shell: bash
+        run: |
+          mkdir -p release
+          npm pack --json --pack-destination release > release/pack.json
+          sha256sum release/*.tgz > release/SHA256SUMS
+      - name: Upload the checked tarball
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: npm-package-${{ github.sha }}
+          path: release/
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: Publish through npm Trusted Publishing
+    if: ${{ inputs.publish }}
+    needs: package
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - name: Require successful cross-platform CI for this commit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          response="$(curl --fail-with-body --silent --show-error \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?head_sha=${GITHUB_SHA}&status=success&per_page=100")"
+          jq -e --arg sha "${GITHUB_SHA}" \
+            '.workflow_runs | any(.head_sha == $sha and .conclusion == "success")' \
+            <<<"${response}" >/dev/null || {
+              echo "CI has no successful Windows/Linux × Node 22/24 run for ${GITHUB_SHA}" >&2
+              exit 1
+            }
+      - name: Check out the selected commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Pin a Trusted Publishing capable npm CLI
+        shell: bash
+        run: |
+          npm install --global npm@11.6.2
+          test "$(npm --version)" = '11.6.2'
+      - name: Download the checked tarball
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: npm-package-${{ github.sha }}
+          path: release
+      - name: Verify tag, commit, manifest, and tarball
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          expected_tag="v${version}"
+          test "${RELEASE_TAG}" = "${expected_tag}" || {
+            echo "release tag ${RELEASE_TAG:-<empty>} does not match ${expected_tag}" >&2
+            exit 1
+          }
+          git fetch --force origin "refs/tags/${RELEASE_TAG}:refs/tags/${RELEASE_TAG}"
+          test "$(git rev-list -n 1 "${RELEASE_TAG}")" = "${GITHUB_SHA}" || {
+            echo "${RELEASE_TAG} does not point to checked commit ${GITHUB_SHA}" >&2
+            exit 1
+          }
+          sha256sum --check release/SHA256SUMS
+          tarball="$(find release -maxdepth 1 -name '*.tgz' -type f -print -quit)"
+          test -n "${tarball}" || { echo 'checked tarball is missing' >&2; exit 1; }
+          packed="$(tar -xOf "${tarball}" package/package.json | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const p=JSON.parse(s);process.stdout.write(p.name+'@'+p.version)})")"
+          test "${packed}" = "@eduwork/dsh-oidc@${version}" || {
+            echo "packed identity ${packed} is not @eduwork/dsh-oidc@${version}" >&2
+            exit 1
+          }
+      - name: Publish the checked tarball
+        shell: bash
+        run: npm publish "$(find release -maxdepth 1 -name '*.tgz' -type f -print -quit)" --access public --provenance

@@ -7,7 +7,7 @@ Record reviewer names, date, command output links, and exceptions in the release
 ## Authority and project metadata
 
 - [ ] Repository owner confirmed public release and the MIT license.
-- [ ] The `freedomkk-qfeng/dsh-oidc` remote is confirmed; npm package ownership is approved separately if npm publication is planned.
+- [ ] The `freedomkk-qfeng/dsh-oidc` remote and ownership of the `@eduwork/dsh-oidc` npm package are confirmed.
 - [ ] Maintainer, security, and release-manager rosters recorded with backups.
 - [ ] GitHub Private Vulnerability Reporting is enabled and its entry point has been checked without sensitive data.
 - [ ] ECNU/ChatECNU name, example text, colors, and trademark notice approved.
@@ -35,7 +35,7 @@ Record reviewer names, date, command output links, and exceptions in the release
 
 ## Supply chain
 
-- [ ] Clean `npm ci` completed on Windows and Linux with Node 22.
+- [ ] Clean `npm ci` and `npm run check` completed on Windows and Linux with Node 22 and 24.
 - [ ] `npm audit` and static analysis reviewed (not merely run).
 - [ ] Every direct/transitive license and exception reviewed.
 - [ ] npm install scripts reviewed; unexpected scripts denied.
@@ -56,5 +56,7 @@ Record reviewer names, date, command output links, and exceptions in the release
 - [ ] `npm pack --dry-run` and extracted tarball reviewed; only intended files included.
 - [ ] Source maps contain no private absolute paths or secrets.
 - [ ] Tag/release notes/checksums prepared.
-- [ ] npm trusted publishing/provenance configured; no long-lived local publish token.
+- [ ] npm Trusted Publisher is bound to repository `freedomkk-qfeng/dsh-oidc`, workflow `release.yml`, and environment `npm`; until that binding exists, the manual workflow is run only with `publish=false`.
+- [ ] The publish job uses pinned npm CLI `11.6.2` (meeting Trusted Publishing's npm `>=11.5.1` and Node `>=22.14.0` requirements), and this commit's Windows/Linux × Node 22/24 CI is successful.
+- [ ] Publication uses an explicitly supplied existing `v<package version>` tag and `publish=true`; the workflow verifies the tag, commit, tarball identity, and SHA-256 before publishing with provenance and no long-lived local publish token.
 - [ ] Rollback/deprecation and vulnerability-notification plan confirmed.

@@ -4,7 +4,7 @@
 
 ## 支持的宿主基线
 
-当前兼容基线为 DeepSeek Harness `0.1.2-alpha.2`，上游 commit `0a53fb55bea101816fa226bb964ae2bed71c343b`。DSH 仍处于预发布阶段，因此 peer version 使用精确版本。
+当前兼容基线为 DeepSeek Harness `0.1.2-rc.1`，上游 commit `a66e4702047846cdaa10c66c9d3df3951f5ea70d`。DSH 仍处于预发布阶段，因此本包把完整 DSH peer 闭包固定到该精确版本，并在检查中拒绝混入其他 DSH 版本。
 
 插件只使用公开 package export，不复制 DSH 源码：
 
@@ -59,7 +59,7 @@ Client 描述符使用严格 Zod codec。发送给浏览器的配置不包含 is
 `dsh-oidc` 自带默认的 Web-first Bundle patch，可以直接从 npm 安装到官方 Web Profile，无需再编写 wrapper Bundle：
 
 ```bash
-dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0
 ```
 
 需要审计、开发或验证尚未发布的改动时，可以安装经过审查的本地 checkout：
@@ -72,7 +72,7 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-本地路径安装会把 checkout 链接到 Profile，因此源码目录必须持续存在。它不会扫描当前工作区。团队部署应优先固定经过复核的 npm 精确版本；`@eduwork/dsh-oidc@alpha` 只适合明确希望跟随预发布更新的场景。
+本地路径安装会把 checkout 链接到 Profile，因此源码目录必须持续存在。它不会扫描当前工作区。团队部署应固定经过复核的 npm 精确版本；不要在同一 Profile 中混装其他 DSH 预发布线。
 
 随包 patch 使用 `DSH_OIDC_ENTERPRISE_PROFILE` 挂载且只挂载一个 `enterprise-oidc` 实例。Web backend 要求 DSH WebServer 精确监听 `127.0.0.1`，并从实际端口构造固定 `/oauth/callback`；不接受公网回调源配置。它有意不设置 `agent-default-model`，因为 Provider 和模型 ID 属于部署方 Enterprise Profile，用户可在 DSH 中选择可用企业模型。
 

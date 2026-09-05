@@ -1,7 +1,7 @@
 import { access, readdir, readFile } from 'node:fs/promises'
 
 const root = new URL('../', import.meta.url)
-const ignored = new Set(['.git', 'node_modules', 'lib', 'coverage'])
+const ignored = new Set(['.git', 'node_modules', 'lib', 'coverage', 'dist'])
 const failures = []
 const documents = []
 

@@ -7,7 +7,7 @@
 ## 授权与项目元数据
 
 - [ ] 仓库所有者确认公开发布和 MIT 许可证。
-- [ ] `freedomkk-qfeng/dsh-oidc` 远程仓库位置已确认；如发布 npm，`dsh-oidc` 包所有权另行确认。
+- [ ] `freedomkk-qfeng/dsh-oidc` 远程仓库位置和 `@eduwork/dsh-oidc` npm 包所有权均已确认。
 - [ ] 维护者、安全维护者和发布经理名单及替补已记录。
 - [ ] GitHub Private Vulnerability Reporting 已启用并完成一次无敏感数据的入口检查。
 - [ ] ECNU/ChatECNU 名称、示例文字、颜色和商标声明获批。
@@ -35,7 +35,7 @@
 
 ## 供应链
 
-- [ ] Windows 和 Linux 上使用 Node 22 完成干净 `npm ci`。
+- [ ] Windows 和 Linux 上分别使用 Node 22、24 完成干净 `npm ci` 与 `npm run check`。
 - [ ] `npm audit` 和静态分析结果经过审查，而不只是执行。
 - [ ] 所有直接/间接许可证和例外已经审查。
 - [ ] npm 安装脚本已经审查，未预期脚本被拒绝。
@@ -56,5 +56,7 @@
 - [ ] 已审查 `npm pack --dry-run` 和解压后的 tarball，且只包含预期文件。
 - [ ] Source map 不包含私有绝对路径或秘密。
 - [ ] Tag、发布说明和 checksum 已准备。
-- [ ] npm trusted publishing/provenance 已配置，不使用长期本地 publish token。
+- [ ] npm Trusted Publisher 已绑定仓库 `freedomkk-qfeng/dsh-oidc`、workflow `release.yml` 和 environment `npm`；在绑定完成前只以 `publish=false` 运行手动工作流。
+- [ ] 发布 job 使用固定的 npm CLI `11.6.2`（满足 Trusted Publishing 对 npm `>=11.5.1`、Node `>=22.14.0` 的要求），且该提交的 Windows/Linux × Node 22/24 CI 已成功。
+- [ ] 发布时显式填写现有标签 `v<package version>` 并启用 `publish=true`；workflow 校验标签、提交、tarball 身份和 SHA-256 后才使用 provenance 发布，不使用长期本地 publish token。
 - [ ] 已确认回滚、弃用和漏洞通知计划。

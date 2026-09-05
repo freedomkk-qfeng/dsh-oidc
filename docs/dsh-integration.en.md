@@ -4,7 +4,7 @@
 
 ## Supported host baseline
 
-The current compatibility baseline is DeepSeek Harness `0.1.2-alpha.2`, upstream commit `0a53fb55bea101816fa226bb964ae2bed71c343b`. Peer versions are exact while DSH remains prerelease software.
+The current compatibility baseline is DeepSeek Harness `0.1.2-rc.1`, upstream commit `a66e4702047846cdaa10c66c9d3df3951f5ea70d`. Because DSH remains prerelease software, this package pins the complete DSH peer closure to that exact version and rejects a mixed DSH tree during checks.
 
 The plugin uses public package exports rather than copied DSH source:
 
@@ -59,7 +59,7 @@ The client descriptor uses strict Zod codecs. Configuration sent to the browser 
 `dsh-oidc` declares its own default Web-first Bundle patch. Install it directly from npm into the official Web profile without authoring a wrapper Bundle:
 
 ```bash
-dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0
 ```
 
 For auditing, development, or validating unpublished changes, install a reviewed local checkout instead:
@@ -72,7 +72,7 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-The local-path install links the checkout into the Profile, so the source directory must remain available. It does not scan the current workspace. Team deployments should prefer a reviewed, exact npm version; `@eduwork/dsh-oidc@alpha` is only for deployments that intentionally follow prerelease updates.
+The local-path install links the checkout into the Profile, so the source directory must remain available. It does not scan the current workspace. Team deployments should pin a reviewed, exact npm version and must not mix another DSH prerelease line into the same Profile.
 
 The shipped patch mounts exactly one `enterprise-oidc` instance using `DSH_OIDC_ENTERPRISE_PROFILE`. The Web backend requires the DSH WebServer to listen exactly on `127.0.0.1` and builds the fixed `/oauth/callback` from its actual port; no public callback-origin setting is accepted. It deliberately does not set `agent-default-model`, because Provider and model IDs belong to the deployment's Enterprise Profile and users can select an available enterprise model in DSH.
 

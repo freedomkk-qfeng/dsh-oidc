@@ -103,10 +103,10 @@
         "supportsStore": { "type": "boolean" },
         "supportsReasoningEffort": { "type": "boolean" },
         "supportsUsageInStreaming": { "type": "boolean" },
-        "maxTokensField": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "maxTokensField": { "enum": ["max_completion_tokens", "max_tokens"] },
         "supportsStrictMode": { "type": "boolean" },
         "supportsLongCacheRetention": { "type": "boolean" },
-        "thinkingFormat": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "thinkingFormat": { "enum": ["openai", "deepseek", "openrouter", "together", "baseten", "zai", "qwen", "chat-template", "qwen-chat-template", "string-thinking", "ant-ling"] },
         "requiresReasoningContentOnAssistantMessages": { "type": "boolean" }
       }
     },
@@ -143,7 +143,21 @@
         "reasoningEfforts": {
           "oneOf": [
             { "const": false },
-            { "type": "object", "minProperties": 1, "maxProperties": 16, "additionalProperties": { "type": ["string", "null"], "maxLength": 32 } }
+            {
+              "type": "object",
+              "minProperties": 1,
+              "maxProperties": 7,
+              "additionalProperties": false,
+              "properties": {
+                "off": { "type": ["string", "null"], "minLength": 1, "maxLength": 32 },
+                "minimal": { "type": "string", "minLength": 1, "maxLength": 32 },
+                "low": { "type": "string", "minLength": 1, "maxLength": 32 },
+                "medium": { "type": "string", "minLength": 1, "maxLength": 32 },
+                "high": { "type": "string", "minLength": 1, "maxLength": 32 },
+                "xhigh": { "type": "string", "minLength": 1, "maxLength": 32 },
+                "max": { "type": "string", "minLength": 1, "maxLength": 32 }
+              }
+            }
           ]
         },
         "compat": { "$ref": "#/$defs/compat" }
@@ -158,7 +172,7 @@
         "displayName": { "$ref": "#/$defs/nonEmpty120" },
         "adapter": { "const": "openai-compatible" },
         "baseURL": { "$ref": "#/$defs/endpointURL" },
-        "reasoning": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "reasoning": { "enum": ["off", "minimal", "low", "medium", "high", "xhigh", "max"] },
         "defaultContextWindow": { "$ref": "#/$defs/positiveInteger" },
         "defaultMaxTokens": { "$ref": "#/$defs/positiveInteger" },
         "maxRequestImageBytes": { "$ref": "#/$defs/positiveInteger" },

@@ -16,7 +16,7 @@
 
 | 组件 | 谁提供 | 最低要求 |
 | --- | --- | --- |
-| DSH Host | 部署方 | DeepSeek Harness `0.1.2-alpha.2`，Node.js 22+。 |
+| DSH Host | 部署方 | DeepSeek Harness `0.1.2-rc.1`，Node.js 22+。 |
 | 机构企业模型集成服务 | 同一服务所有者 | 共同提供 OIDC Provider、固定 Key Binding 和 OpenAI-compatible 模型网关；三者全部必需。 |
 | Enterprise Profile | 部署方 | 一份受信任的本地 JSON，只存公开配置，不存密钥或个人信息。 |
 | Credential Provider | DSH Host | 当前 Web backend 仅支持可信单用户本机存储。 |
@@ -122,7 +122,7 @@ Profile 是部署配置，不是用户输入。它可以声明模型事实和有
 `dsh-oidc` 本身是可直接安装的 DSH Bundle。团队部署应从 npm 安装经过复核的精确版本：
 
 ```bash
-dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0
 ```
 
 需要审计、开发或测试尚未发布的改动时，再从本地 checkout 安装：
@@ -141,11 +141,7 @@ dsh plugin --profile web add .
 dsh plugin --profile web add ./dsh-oidc
 ```
 
-DSH 会把本地 checkout 链接到 `$DSH_HOME/profiles/web`，不会扫描或复制当前目录；安装完成后不要移动或删除 checkout。源码部署应固定经过审核的 commit。若明确希望持续跟随 alpha 更新，也可以使用：
-
-```bash
-dsh plugin --profile web add @eduwork/dsh-oidc@alpha
-```
+DSH 会把本地 checkout 链接到 `$DSH_HOME/profiles/web`，不会扫描或复制当前目录；安装完成后不要移动或删除 checkout。源码部署应固定经过审核的 commit。生产或团队 Profile 应使用精确 npm 版本，不要混装其他 DSH 预发布线。
 
 设置 Enterprise Profile 路径，并让 DSH 监听固定 loopback host：
 
@@ -236,4 +232,4 @@ native backend 必须提供 `enterpriseAccounts` 服务，并与 Web 一样传�
 
 ### 为什么企业服务是单独的设置页
 
-当前 DSH `0.1.2-alpha.2` 已提供正式的 `settings.models.footer` 插槽。插件直接把企业模型管理能力挂载到官方“模型”页，并保持官方模型页启用，不再依赖产品私有的模型页 fork。
+当前 DSH `0.1.2-rc.1` 提供正式的 `settings.models.footer` 插槽。插件直接把企业模型管理能力挂载到官方“模型”页，并保持官方模型页启用，不再依赖产品私有的模型页 fork。

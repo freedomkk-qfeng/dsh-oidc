@@ -2,7 +2,7 @@
 
 [简体中文](0001-one-plugin-composition-boundary.md) | **English**
 
-- Status: Accepted for alpha
+- Status: Accepted
 - Date: 2026-08-25
 
 ## Context

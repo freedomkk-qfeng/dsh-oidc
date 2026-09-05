@@ -6,6 +6,12 @@ const idPattern = /^[a-z][a-z0-9-]{0,63}$/
 const credentialPattern = /^[A-Za-z_][A-Za-z0-9_]*$/
 const colorPattern = /^#[0-9a-fA-F]{6}$/
 const allowedModalities = new Set(['text', 'image'])
+const allowedThinkingLevels = new Set(['off', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'])
+const allowedMaxTokensFields = new Set(['max_completion_tokens', 'max_tokens'])
+const allowedThinkingFormats = new Set([
+  'openai', 'deepseek', 'openrouter', 'together', 'baseten', 'zai', 'qwen',
+  'chat-template', 'qwen-chat-template', 'string-thinking', 'ant-ling',
+])
 const allowedRootKeys = new Set([
   'schemaVersion', 'id', 'displayName', 'organization', 'nativeInstitutionID',
   'allowInsecureDevelopment', 'insecureDevelopmentOrigin', 'brand', 'oidc', 'keyBinding', 'provider',
@@ -141,9 +147,15 @@ function normalizeCompat(value, label) {
   const result = {}
   for (const key of allowedCompatKeys) {
     if (source[key] === undefined) continue
-    result[key] = key === 'maxTokensField' || key === 'thinkingFormat'
-      ? text(source[key], `${label}.${key}`, 64)
-      : boolean(source[key], `${label}.${key}`)
+    if (key === 'maxTokensField') {
+      result[key] = text(source[key], `${label}.${key}`, 64)
+      if (!allowedMaxTokensFields.has(result[key])) throw new Error(`${label}.${key} is not supported by DSH pi-ai`)
+    } else if (key === 'thinkingFormat') {
+      result[key] = text(source[key], `${label}.${key}`, 64)
+      if (!allowedThinkingFormats.has(result[key])) throw new Error(`${label}.${key} is not supported by DSH pi-ai`)
+    } else {
+      result[key] = boolean(source[key], `${label}.${key}`)
+    }
   }
   return Object.freeze(result)
 }
@@ -151,9 +163,12 @@ function normalizeCompat(value, label) {
 function normalizeReasoningEfforts(value, providerID, modelID) {
   if (value === false) return false
   const source = object(value, `${providerID}.${modelID}.reasoningEfforts`)
-  if (Object.keys(source).length === 0 || Object.keys(source).length > 16) throw new Error(`${providerID}.${modelID}.reasoningEfforts must contain 1-16 entries`)
+  if (Object.keys(source).length === 0 || Object.keys(source).length > allowedThinkingLevels.size) {
+    throw new Error(`${providerID}.${modelID}.reasoningEfforts must contain 1-${allowedThinkingLevels.size} entries`)
+  }
   return Object.freeze(Object.fromEntries(Object.entries(source).map(([level, wire]) => {
-    text(level, `${providerID}.${modelID}.reasoningEfforts level`, 32)
+    if (!allowedThinkingLevels.has(level)) throw new Error(`${providerID}.${modelID}.reasoningEfforts level ${level} is not supported by DSH pi-ai`)
+    if (wire === null && level !== 'off') throw new Error(`${providerID}.${modelID}.reasoningEfforts.${level} may be null only for off`)
     if (wire !== null) text(wire, `${providerID}.${modelID}.reasoningEfforts.${level}`, 32)
     return [level, wire]
   })))
@@ -296,7 +311,13 @@ export function normalizeEnterpriseProfile(raw) {
       displayName: text(provider.displayName ?? source.displayName, 'profile.provider.displayName', 120),
       adapter: provider.adapter,
       baseURL: exactURL(provider.baseURL, 'profile.provider.baseURL', allowInsecureDevelopment, allowedInsecureOrigin),
-      reasoning: provider.reasoning === undefined ? 'high' : text(provider.reasoning, 'profile.provider.reasoning', 32),
+      reasoning: provider.reasoning === undefined
+        ? 'high'
+        : (() => {
+            const reasoning = text(provider.reasoning, 'profile.provider.reasoning', 32)
+            if (!allowedThinkingLevels.has(reasoning)) throw new Error('profile.provider.reasoning is not supported by DSH pi-ai')
+            return reasoning
+          })(),
       defaultContextWindow: optionalPositiveInteger(provider.defaultContextWindow, 'profile.provider.defaultContextWindow'),
       defaultMaxTokens: optionalPositiveInteger(provider.defaultMaxTokens, 'profile.provider.defaultMaxTokens'),
       maxRequestImageBytes: optionalPositiveInteger(provider.maxRequestImageBytes, 'profile.provider.maxRequestImageBytes'),
@@ -342,15 +363,22 @@ export function enterpriseProviderConfig(profiles) {
       allowInsecureDevelopment: profile.allowInsecureDevelopment,
       ...(profile.insecureDevelopmentOrigin === undefined ? {} : { insecureDevelopmentOrigin: profile.insecureDevelopmentOrigin }),
       reasoning: profile.provider.reasoning,
-      defaultContextWindow: profile.provider.defaultContextWindow,
-      defaultMaxTokens: profile.provider.defaultMaxTokens,
-      maxRequestImageBytes: profile.provider.maxRequestImageBytes,
-      requestImagePixelBudget: profile.provider.requestImagePixelBudget,
-      requestImageMaxBytes: profile.provider.requestImageMaxBytes,
-      streamIdleTimeoutMs: profile.provider.streamIdleTimeoutMs,
-      retryPolicy: profile.provider.retryPolicy,
-      compat: profile.provider.compat,
-      models: profile.provider.models,
+      ...(profile.provider.defaultContextWindow === undefined ? {} : { defaultContextWindow: profile.provider.defaultContextWindow }),
+      ...(profile.provider.defaultMaxTokens === undefined ? {} : { defaultMaxTokens: profile.provider.defaultMaxTokens }),
+      ...(profile.provider.maxRequestImageBytes === undefined ? {} : { maxRequestImageBytes: profile.provider.maxRequestImageBytes }),
+      ...(profile.provider.requestImagePixelBudget === undefined ? {} : { requestImagePixelBudget: profile.provider.requestImagePixelBudget }),
+      ...(profile.provider.requestImageMaxBytes === undefined ? {} : { requestImageMaxBytes: profile.provider.requestImageMaxBytes }),
+      ...(profile.provider.streamIdleTimeoutMs === undefined ? {} : { streamIdleTimeoutMs: profile.provider.streamIdleTimeoutMs }),
+      ...(profile.provider.retryPolicy === undefined ? {} : { retryPolicy: structuredClone(profile.provider.retryPolicy) }),
+      ...(profile.provider.compat === undefined ? {} : { compat: { ...profile.provider.compat } }),
+      models: profile.provider.models.map(model => ({
+        ...model,
+        input: [...model.input],
+        ...(model.reasoningEfforts && typeof model.reasoningEfforts === 'object'
+          ? { reasoningEfforts: { ...model.reasoningEfforts } }
+          : {}),
+        ...(model.compat === undefined ? {} : { compat: { ...model.compat } }),
+      })),
     }])),
   }
 }
