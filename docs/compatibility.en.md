@@ -6,6 +6,7 @@
 
 | dsh-oidc | Node.js | DSH | pi-ai | Status |
 | --- | --- | --- | --- | --- |
+| `0.1.0-alpha.11` | 22, 24 | Declared baseline remains `0.1.2-alpha.2`; separate mainline `0.1.2-rc.1` configuration RPC probe | `^0.84.2` | npm scope migration with persistent contracts retained; the rc.1 probe is not full compatibility acceptance. |
 | `0.1.0-alpha.10` | 22, 24 | `0.1.2-alpha.2` / `0a53fb55…` | `^0.84.2` (`0.84.4` in npm/source Runtimes) | Migrated to `SettingsProvider.installSection()`; full checks pass through both npm and source release-pack paths. |
 | `0.1.0-alpha.9` | 22, 24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2` (`0.84.4` in the reviewed source Runtime) | Web and native consume only standard Enterprise Profiles; product institution-catalog conversion is completely outside the plugin. |
 | `0.1.0-alpha.8` | 22, 24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2` (`0.84.4` in the reviewed source Runtime) | Shared Web/native Profile credential-reference rule, production/test local-key isolation, and fail-closed native mismatch handling. |
@@ -23,7 +24,7 @@ Only exact DSH peer versions in `package.json` are supported. Other versions may
 
 - Enterprise Profile: `dsh-oidc/v1alpha1`
 - Key Binding: `worker-user-center-v1`
-- Typert package/namespace: `dsh-oidc` / `oidcAccounts`
+- Typert package/namespace: `@eduwork/dsh-oidc` / `oidcAccounts`
 - Browser management projection: `dsh-oidc/management/v1alpha1`
 - Callback path: `/oauth/callback`
 - Provider transform service: `enterpriseTransforms`

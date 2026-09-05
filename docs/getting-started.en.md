@@ -59,7 +59,7 @@ The Profile is trusted deployment data, not a secret store. It must not contain 
 The package is itself an installable DSH Bundle. Team deployments should install the reviewed, exact version from npm:
 
 ```bash
-dsh plugin --profile web add dsh-oidc@0.1.0-alpha.10
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
 ```
 
 For auditing, development, or testing unpublished changes, install from a local checkout instead:
@@ -81,7 +81,7 @@ dsh plugin --profile web add ./dsh-oidc
 DSH links the checkout into `$DSH_HOME/profiles/web`; it does not scan or copy the invoking directory. Keep the checkout in place and pin a reviewed commit for source-based deployments. To intentionally follow alpha updates, use:
 
 ```bash
-dsh plugin --profile web add dsh-oidc@alpha
+dsh plugin --profile web add @eduwork/dsh-oidc@alpha
 ```
 
 Set the trusted local Profile path and start DSH on the fixed loopback host:
@@ -102,7 +102,7 @@ A product-owned Bundle may mount the plugin explicitly instead of using the defa
 ```yaml
 - insert:
     - id: enterprise-oidc
-      name: dsh-oidc
+      name: '@eduwork/dsh-oidc'
       config:
         profilePathEnv: DSH_OIDC_ENTERPRISE_PROFILE
         web:

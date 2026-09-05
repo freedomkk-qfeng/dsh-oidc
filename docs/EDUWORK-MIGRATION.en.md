@@ -2,14 +2,22 @@
 
 [简体中文](EDUWORK-MIGRATION.md) | **English**
 
-The user selected the `@eduwork` scope. This source candidate is `@eduwork/dsh-oidc@0.1.0-alpha.11`; it has not been published. As checked on 2026-09-05, the organization has not been created and local npm authentication is invalid. Existing unscoped releases remain available.
+Starting with this version, the npm package is `@eduwork/dsh-oidc@0.1.0-alpha.11`, replacing `dsh-oidc`. The npm `eduwork` organization exists. The GitHub repository and checkout directory remain `dsh-oidc`. Consult the npm registry for current publication status.
 
-## Compatibility
+## Installation and migration
 
-The npm identity, module-loader identity and package imports move together. OIDC RPC package metadata changes on both Host and Client. Persisted OIDC profile schema, credential references and provider IDs retain their previous values; Mail retains its settings namespace and attachment directory. Repository names and paths are unchanged.
+```sh
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
+```
 
-After the scoped release is verified, install it with `dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11`. For an existing Profile, back up package.json and cordis.patch.yml, replace the old package key and bundle entry with the scoped name, and update module names in custom patch rows. Keep row IDs, settings and user files. Restart the host and do not enable both packages simultaneously. The main product migrates its owned package entries; unrelated community plugins remain intact.
+Back up an existing Profile's package.json and cordis.patch.yml, then update its dependency and dsh.profile.bundles entries. Update module name paths in custom patches too. Do not enable both package identities together; restart the Host after switching. These are separate npm packages, so updating the old package cannot migrate an installation automatically.
 
-## Release prerequisites
+## Data compatibility
 
-Create and verify ownership of the npm eduwork organization, restore authentication, inspect and test the fixed tarball, and publish it with public access. Only after the new release is available should maintainers decide the old release maintenance window and migration notice. No registry deprecation, unpublishing, or user installation migration has been performed in this source change.
+Keep `dsh-oidc/v1alpha1`, `oidcAccounts`, credential references, Provider identities and plugin row ids. Host and Client TYPERT package identities change together.
+
+Storage directories and user configuration content do not change. Product-managed Profiles migrate their owned dependencies through the product upgrader; community plugins remain unchanged.
+
+## Release scope
+
+This is an alpha package-identity migration retaining the declared DSH peer baseline. Build, tests, documentation, license and tarball checks cover this change. It adds no claims of real institutional sign-in, real email delivery or production acceptance. Stable releases still require the complete deployment checks. Keep previous versions installable and add a migration notice only after the new package passes installation validation.

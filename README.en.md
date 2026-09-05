@@ -1,6 +1,6 @@
 # dsh-oidc
 
-> npm migration candidate: `@eduwork/dsh-oidc@0.1.0-alpha.11`, not published yet. Keep using the existing unscoped release until the scoped package is available. See [migration and data compatibility](docs/EDUWORK-MIGRATION.en.md).
+> npm package: `@eduwork/dsh-oidc@0.1.0-alpha.11`. The previous unscoped package remains available during migration. See [migration and data compatibility](docs/EDUWORK-MIGRATION.en.md).
 
 [简体中文](README.md) | **English**
 
@@ -87,7 +87,7 @@ The current Web backend is intentionally limited to a trusted, single-user DSH p
 Install the reviewed, exact version from npm:
 
 ```bash
-dsh plugin --profile web add dsh-oidc@0.1.0-alpha.10
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
 ```
 
 For auditing, development, or testing unpublished changes, install from a local checkout instead:
@@ -100,14 +100,14 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-The local-path form links the checkout into the DSH `web` Profile, so keep the source directory in place. Team deployments should prefer a reviewed, exact npm version; use `dsh-oidc@alpha` only when intentionally following alpha updates.
+The local-path form links the checkout into the DSH `web` Profile, so keep the source directory in place. Team deployments should prefer a reviewed, exact npm version; use `@eduwork/dsh-oidc@alpha` only when intentionally following alpha updates.
 
 Advanced products may instead add it explicitly to their own DSH bundle patch:
 
 ```yaml
 - insert:
     - id: enterprise-oidc
-      name: dsh-oidc
+      name: '@eduwork/dsh-oidc'
       config:
         profilePathEnv: DSH_OIDC_ENTERPRISE_PROFILE
 ```

@@ -6,6 +6,13 @@ All notable changes are documented here. The format follows Keep a Changelog pri
 
 ## [Unreleased]
 
+## [0.1.0-alpha.11] - 2026-09-05
+
+- Move the npm identity to `@eduwork/dsh-oidc`; update installation/module paths and Client registration together.
+- Keep `dsh-oidc/v1alpha1`, `oidcAccounts`, credential references, Provider identities and plugin row ids. Host and Client TYPERT package identities change together.
+- Keep the previous unscoped version installable and document Profile migration.
+
+
 ## [0.1.0-alpha.10] - 2026-08-31
 
 ### Changed

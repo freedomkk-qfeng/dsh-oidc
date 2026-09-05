@@ -6,6 +6,13 @@
 
 ## [未发布]
 
+## [0.1.0-alpha.11] - 2026-09-05
+
+- npm 包身份改为 `@eduwork/dsh-oidc`，同步安装路径、组合模块路径与客户端注册。
+- 保留 `dsh-oidc/v1alpha1`、`oidcAccounts`、凭据引用、Provider 标识和插件行 id；Host 与 Client 的 TYPERT 包归属一起更新。
+- 旧无作用域版本保留可安装，并提供 Profile 迁移说明。
+
+
 ## [0.1.0-alpha.10] - 2026-08-31
 
 ### 变更

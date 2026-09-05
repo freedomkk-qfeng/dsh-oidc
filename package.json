@@ -35,7 +35,9 @@
     "README.en.md",
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
-    "THIRD_PARTY_NOTICES.en.md"
+    "THIRD_PARTY_NOTICES.en.md",
+    "CHANGELOG.md",
+    "CHANGELOG.en.md"
   ],
   "dsh": {
     "bundle": {

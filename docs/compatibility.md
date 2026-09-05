@@ -6,6 +6,7 @@
 
 | dsh-oidc | Node.js | DSH | pi-ai | 状态 |
 | --- | --- | --- | --- | --- |
+| `0.1.0-alpha.11` | 22、24 | 声明基线仍为 `0.1.2-alpha.2`；另有主线 `0.1.2-rc.1` 隔离配置 RPC 探针 | `^0.84.2` | npm 作用域迁移；保留数据协议；不将 rc.1 探针视为完整版本兼容验收。 |
 | `0.1.0-alpha.10` | 22、24 | `0.1.2-alpha.2` / `0a53fb55…` | `^0.84.2`（npm/源码 Runtime 中为 `0.84.4`） | 迁移到 `SettingsProvider.installSection()`；npm 与源码 release-pack 双路径通过完整检查。 |
 | `0.1.0-alpha.9` | 22、24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2`（已审查源码 Runtime 中为 `0.84.4`） | Web/native 只消费标准 Enterprise Profile；产品机构目录转换彻底移出插件。 |
 | `0.1.0-alpha.8` | 22、24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2`（已审查源码 Runtime 中为 `0.84.4`） | Web/native 共用 Profile 凭据引用规则；支持生产/测试本地 Key 隔离，并对 native 引用错配失败关闭。 |
@@ -23,7 +24,7 @@
 
 - Enterprise Profile：`dsh-oidc/v1alpha1`
 - Key Binding：`worker-user-center-v1`
-- Typert 包/命名空间：`dsh-oidc` / `oidcAccounts`
+- Typert 包/命名空间：`@eduwork/dsh-oidc` / `oidcAccounts`
 - 浏览器管理投影：`dsh-oidc/management/v1alpha1`
 - 回调路径：`/oauth/callback`
 - Provider 转换服务：`enterpriseTransforms`

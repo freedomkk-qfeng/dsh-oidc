@@ -122,7 +122,7 @@ Profile 是部署配置，不是用户输入。它可以声明模型事实和有
 `dsh-oidc` 本身是可直接安装的 DSH Bundle。团队部署应从 npm 安装经过复核的精确版本：
 
 ```bash
-dsh plugin --profile web add dsh-oidc@0.1.0-alpha.10
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
 ```
 
 需要审计、开发或测试尚未发布的改动时，再从本地 checkout 安装：
@@ -144,7 +144,7 @@ dsh plugin --profile web add ./dsh-oidc
 DSH 会把本地 checkout 链接到 `$DSH_HOME/profiles/web`，不会扫描或复制当前目录；安装完成后不要移动或删除 checkout。源码部署应固定经过审核的 commit。若明确希望持续跟随 alpha 更新，也可以使用：
 
 ```bash
-dsh plugin --profile web add dsh-oidc@alpha
+dsh plugin --profile web add @eduwork/dsh-oidc@alpha
 ```
 
 设置 Enterprise Profile 路径，并让 DSH 监听固定 loopback host：
@@ -172,7 +172,7 @@ dsh --profile web --host 127.0.0.1 --port 3080 --no-open
 ```yaml
 - insert:
     - id: enterprise-oidc
-      name: dsh-oidc
+      name: '@eduwork/dsh-oidc'
       config:
         profilePathEnv: DSH_OIDC_ENTERPRISE_PROFILE
         web:
@@ -184,7 +184,7 @@ dsh --profile web --host 127.0.0.1 --port 3080 --no-open
 ```yaml
 - insert:
     - id: enterprise-oidc
-      name: dsh-oidc
+      name: '@eduwork/dsh-oidc'
       config:
         backend: native
         uiMode: models-only

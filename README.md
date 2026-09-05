@@ -1,6 +1,6 @@
 # dsh-oidc
 
-> npm 迁移候选：`@eduwork/dsh-oidc@0.1.0-alpha.11`，尚未发布。旧无作用域包仍保留；新包发布后再切换安装入口。迁移方法与数据兼容说明见 [eduwork 迁移](docs/EDUWORK-MIGRATION.md)。
+> npm 包：`@eduwork/dsh-oidc@0.1.0-alpha.11`。旧无作用域包保留供迁移；安装切换与数据兼容见 [迁移说明](docs/EDUWORK-MIGRATION.md)。
 
 **简体中文** | [English](README.en.md)
 
@@ -21,7 +21,7 @@
 
 ## 为什么叫 `dsh-oidc`
 
-这个名字足够准确，也没有把 ECNU、Wails、某个模型网关或某种客户端形态绑进公共能力。仓库名仍为 `dsh-oidc`，新 npm 候选使用 `@eduwork/dsh-oidc`；[旧 npm 包](https://www.npmjs.com/package/dsh-oidc)保留供迁移。
+这个名字足够准确，也没有把 ECNU、Wails、某个模型网关或某种客户端形态绑进公共能力。仓库名仍为 `dsh-oidc`，npm 包使用 `@eduwork/dsh-oidc`；[旧 npm 包](https://www.npmjs.com/package/dsh-oidc)保留供迁移。
 
 它的边界不是“登录结束”，而是“一套能闭环的企业模型接入标准”：
 
@@ -68,7 +68,7 @@
 4. 从 npm 安装经过复核的精确版本：
 
 ```bash
-dsh plugin --profile web add dsh-oidc@0.1.0-alpha.10
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
 ```
 
 需要审计、开发或测试尚未发布的改动时，也可以从本地 checkout 安装：
@@ -81,14 +81,14 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-本地路径安装会把当前 checkout 以依赖链接到 DSH `web` Profile；安装后不要移动或删除源码目录。团队部署应优先固定经过复核的 npm 精确版本；需要主动跟随 alpha 更新时可以使用 `dsh-oidc@alpha`。
+本地路径安装会把当前 checkout 以依赖链接到 DSH `web` Profile；安装后不要移动或删除源码目录。团队部署应优先固定经过复核的 npm 精确版本；需要主动跟随 alpha 更新时可以使用 `@eduwork/dsh-oidc@alpha`。
 
 高级产品也可以在自己的 DSH bundle 中显式引入 `dsh-oidc`：
 
 ```yaml
 - insert:
     - id: enterprise-oidc
-      name: dsh-oidc
+      name: '@eduwork/dsh-oidc'
       config:
         profilePathEnv: DSH_OIDC_ENTERPRISE_PROFILE
 ```

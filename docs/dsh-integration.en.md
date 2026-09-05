@@ -34,7 +34,7 @@ The adapter is therefore an internal module of `dsh-oidc`, but its behavior is c
 - no ambient pi-ai credential discovery;
 - DSH-owned retry policy and attachment resolution.
 
-It remains exported as `dsh-oidc/provider` for tests and advanced local composition, but Enterprise Profiles cannot replace it.
+It remains exported as `@eduwork/dsh-oidc/provider` for tests and advanced local composition, but Enterprise Profiles cannot replace it.
 
 ## Cordis service entry
 
@@ -59,7 +59,7 @@ The client descriptor uses strict Zod codecs. Configuration sent to the browser 
 `dsh-oidc` declares its own default Web-first Bundle patch. Install it directly from npm into the official Web profile without authoring a wrapper Bundle:
 
 ```bash
-dsh plugin --profile web add dsh-oidc@0.1.0-alpha.10
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
 ```
 
 For auditing, development, or validating unpublished changes, install a reviewed local checkout instead:
@@ -72,7 +72,7 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-The local-path install links the checkout into the Profile, so the source directory must remain available. It does not scan the current workspace. Team deployments should prefer a reviewed, exact npm version; `dsh-oidc@alpha` is only for deployments that intentionally follow prerelease updates.
+The local-path install links the checkout into the Profile, so the source directory must remain available. It does not scan the current workspace. Team deployments should prefer a reviewed, exact npm version; `@eduwork/dsh-oidc@alpha` is only for deployments that intentionally follow prerelease updates.
 
 The shipped patch mounts exactly one `enterprise-oidc` instance using `DSH_OIDC_ENTERPRISE_PROFILE`. The Web backend requires the DSH WebServer to listen exactly on `127.0.0.1` and builds the fixed `/oauth/callback` from its actual port; no public callback-origin setting is accepted. It deliberately does not set `agent-default-model`, because Provider and model IDs belong to the deployment's Enterprise Profile and users can select an available enterprise model in DSH.
 
@@ -86,7 +86,7 @@ The shipped patch mounts exactly one `enterprise-oidc` instance using `DSH_OIDC_
 
 - insert:
     - id: enterprise-oidc
-      name: dsh-oidc
+      name: '@eduwork/dsh-oidc'
       config:
         profilePathEnv: DSH_OIDC_ENTERPRISE_PROFILE
         web:
@@ -102,7 +102,7 @@ See the [getting-started guide](getting-started.en.md) for OIDC registration, Ke
 ```yaml
 - insert:
     - id: enterprise-oidc
-      name: dsh-oidc
+      name: '@eduwork/dsh-oidc'
       config:
         backend: native
         uiMode: models-only
