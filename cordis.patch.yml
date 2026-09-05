@@ -3,6 +3,6 @@
 # Web profile. Deployment facts remain outside the package source.
 - insert:
     - id: enterprise-oidc
-      name: dsh-oidc
+      name: '@eduwork/dsh-oidc'
       config:
         profilePathEnv: DSH_OIDC_ENTERPRISE_PROFILE

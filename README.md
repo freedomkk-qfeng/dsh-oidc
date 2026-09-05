@@ -1,5 +1,7 @@
 # dsh-oidc
 
+> npm 迁移候选：`@eduwork/dsh-oidc@0.1.0-alpha.11`，尚未发布。旧无作用域包仍保留；新包发布后再切换安装入口。迁移方法与数据兼容说明见 [eduwork 迁移](docs/EDUWORK-MIGRATION.md)。
+
 **简体中文** | [English](README.en.md)
 
 `dsh-oidc` 是面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的企业身份与模型闭环集成插件。
@@ -19,7 +21,7 @@
 
 ## 为什么叫 `dsh-oidc`
 
-这个名字足够准确，也没有把 ECNU、Wails、某个模型网关或某种客户端形态绑进公共能力。仓库名与 [npm 包名](https://www.npmjs.com/package/dsh-oidc)统一为 `dsh-oidc`。
+这个名字足够准确，也没有把 ECNU、Wails、某个模型网关或某种客户端形态绑进公共能力。仓库名仍为 `dsh-oidc`，新 npm 候选使用 `@eduwork/dsh-oidc`；[旧 npm 包](https://www.npmjs.com/package/dsh-oidc)保留供迁移。
 
 它的边界不是“登录结束”，而是“一套能闭环的企业模型接入标准”：
 

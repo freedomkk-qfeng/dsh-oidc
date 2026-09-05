@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const pkg = 'dsh-oidc'
+const pkg = '@eduwork/dsh-oidc'
 export const profileIdSchema = z.string().min(1).max(64)
 export const reconcileOptionsSchema = z.object({ allowProvision: z.boolean().optional() }).strict()
 export const baseURLSchema = z.string().min(1).max(2048)

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const pkg = 'dsh-oidc'
+const pkg = '@eduwork/dsh-oidc'
 const source = { file: 'lib/index.js', line: 1, column: 1 }
 const profileId = z.string().min(1).max(64)
 const options = z.object({ allowProvision: z.boolean().optional() }).strict()

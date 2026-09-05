@@ -3,7 +3,7 @@ import {
   modelCatalogModeSchema, profileIdSchema, reconcileOptionsSchema, restartResult, runtimeModelsSchema,
 } from './typert-schemas.js'
 
-const pkg = 'dsh-oidc'
+const pkg = '@eduwork/dsh-oidc'
 const source = { file: 'lib/index.js', line: 1, column: 1 }
 const profile = () => jsonParameter('profileID', profileIdSchema, `${pkg}#ProfileID`)
 const options = () => jsonParameter('options', reconcileOptionsSchema, `${pkg}#ReconcileOptions`)

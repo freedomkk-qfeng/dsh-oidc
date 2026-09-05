@@ -1,5 +1,7 @@
 # dsh-oidc
 
+> npm migration candidate: `@eduwork/dsh-oidc@0.1.0-alpha.11`, not published yet. Keep using the existing unscoped release until the scoped package is available. See [migration and data compatibility](docs/EDUWORK-MIGRATION.en.md).
+
 [简体中文](README.md) | **English**
 
 Standards-based enterprise identity and model integration for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
