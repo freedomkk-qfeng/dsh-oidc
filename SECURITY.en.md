@@ -4,7 +4,7 @@
 
 ## Supported versions
 
-No production-stable version has been released. Security fixes are applied to the latest alpha branch only until the first supported release line is declared.
+The supported release line is `0.1.x`; security fixes are applied to its latest release. Alpha versions before `0.1.0` remain available for migration and historical reproduction but do not receive routine fixes.
 
 ## Reporting a vulnerability
 

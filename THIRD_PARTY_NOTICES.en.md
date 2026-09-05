@@ -6,7 +6,7 @@
 
 ## Runtime peers (not copied into this repository)
 
-- DeepSeek Harness packages `0.1.2-alpha.2` and `@deepseek-ai/cordis` `4.0.2` — MIT, Copyright (c) 2026 DeepSeek, <https://github.com/deepseek-ai/deepseek-harness>
+- DeepSeek Harness packages `0.1.2-rc.1` and `@deepseek-ai/cordis` `4.0.2` — MIT, Copyright (c) 2026 DeepSeek, <https://github.com/deepseek-ai/deepseek-harness>
 - `@earendil-works/pi-ai` `^0.84.2` (`0.84.4` in the reviewed source Runtime) — MIT, <https://github.com/earendil-works/pi>
 - React `18.x` — MIT, Copyright (c) Facebook, Inc. and its affiliates, <https://github.com/facebook/react>
 
@@ -46,6 +46,6 @@ Source: <https://github.com/colinhacks/zod>
 
 The repository also declares tsdown (MIT), TypeScript (Apache-2.0), Ajv (MIT), YAML (ISC), and `@types/react` (MIT) for build and validation. They are not included in the npm package's runtime files. Review their transitive licenses and install scripts from the lockfile before release.
 
-At the alpha.1 lockfile, npm reports install scripts on `@google/genai` (a no-op preinstall) and `protobufjs` (postinstall), both reached through the `@earendil-works/pi-ai` peer tree. npm's allow-scripts policy left them unapproved during the preparation install. Release managers must re-review this fact whenever the lockfile changes; `npm audit` reporting zero known vulnerabilities does not replace that review.
+In the `0.1.0` lockfile, npm reports install scripts on `@google/genai` (a no-op preinstall) and `protobufjs` (postinstall), both reached through the `@earendil-works/pi-ai` peer tree. npm's allow-scripts policy left them unapproved during the preparation install. Release managers must re-review this fact whenever the lockfile changes; `npm audit` reporting zero known vulnerabilities does not replace that review.
 
-The prepared lockfile contains 255 package entries with declared license metadata: MIT (190), Apache-2.0 (48), BSD-3-Clause (12), ISC (3), Python-2.0 (1, `argparse`), and 0BSD (1). This is an inventory result, not legal advice; the release manager must regenerate and review it from the final lockfile.
+The prepared lockfile contains 230 package entries with declared license metadata: MIT (170), Apache-2.0 (45), BSD-3-Clause (12), ISC (2), and 0BSD (1). This is an inventory result, not legal advice; the release manager must regenerate and review it from the final lockfile.

@@ -104,7 +104,7 @@ Provider 对象是由本地、经过审查的 adapter 解释的数据。
 | `displayName` | 否 | 面向用户的 Provider 名称。 |
 | `adapter` | 是 | 精确字符串 `openai-compatible`。 |
 | `baseURL` | 是 | HTTPS OpenAI-compatible API 基址。 |
-| `reasoning` | 否 | 默认 DSH/pi-ai reasoning level，默认为 `high`。 |
+| `reasoning` | 否 | 默认 DSH/pi-ai reasoning level，取值为 `off`、`minimal`、`low`、`medium`、`high`、`xhigh`、`max`，默认为 `high`。 |
 | `defaultContextWindow` | 否 | 正安全整数，默认 262144。 |
 | `defaultMaxTokens` | 否 | 正安全整数，默认 32768。 |
 | `maxRequestImageBytes` | 否 | 单次原生图片请求的累计大小预算。 |
@@ -128,7 +128,7 @@ Provider 对象是由本地、经过审查的 adapter 解释的数据。
 - `input` 可包含 `text`、`image` 或两者，默认 `text`；
 - 可选的正数 `contextWindow` 和 `maxTokens`；
 - 可选 `reasoning` 布尔值；
-- 可选 `reasoningEfforts` 对象或 `false`；
+- 可选 `reasoningEfforts` 对象或 `false`；对象键限于 `off`、`minimal`、`low`、`medium`、`high`、`xhigh`、`max`，且只有 `off` 的过线值可以为 `null`；
 - 可选的受限 `compat` 覆盖。
 
 若模型支持 thinking，但不支持选择 reasoning effort，请设置：

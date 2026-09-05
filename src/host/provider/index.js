@@ -1,5 +1,5 @@
 import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
-import { LlmError, assertUsableApiKey, resolveRetryPolicy } from '@deepseek-ai/dsh-llm'
+import { LlmError, assertUsableApiKey, resolveImageAttachmentAccess, resolveRetryPolicy } from '@deepseek-ai/dsh-llm'
 import { Config as PiAiConfig, PiAiAdapter } from '@deepseek-ai/dsh-llm-pi-ai'
 import { createProvider } from '@earendil-works/pi-ai'
 import { openAICompletionsApi } from '@earendil-works/pi-ai/api/openai-completions.lazy'
@@ -22,7 +22,13 @@ function installEnterpriseSettings(ctx, rawConfig, hooks) {
       SETTINGS_NAMESPACE,
       PiAiConfig,
       settingsBase(rawConfig),
-      hooks,
+      {
+        ...hooks,
+        validate(value) {
+          assertServiceableEnterpriseProviders(value)
+          hooks.validate?.(value)
+        },
+      },
     )
   })
 }
@@ -68,6 +74,10 @@ function profilesFrom(rawConfig) {
   return profiles
 }
 
+export function assertServiceableEnterpriseProviders(rawConfig) {
+  profilesFrom(rawConfig)
+}
+
 function isolatedPiAiAuth() {
   const stored = new Map()
   return {
@@ -89,6 +99,14 @@ function isolatedPiAiAuth() {
   }
 }
 
+export function resolveEnterpriseImageAccess(ctx, attachments, ref) {
+  return resolveImageAttachmentAccess(
+    attachments,
+    hostPath => ctx.get('fs')?.processPathFromHostPath(hostPath),
+    ref,
+  )
+}
+
 export function apply(ctx, rawConfig = {}) {
   const transforms = new EnterpriseModelTransforms(ctx)
   let current = () => settingsBase(rawConfig)
@@ -108,6 +126,7 @@ export function apply(ctx, rawConfig = {}) {
       throw new LlmError(`${name}: no credential for provider route "${provider}" (${ref})`, 'MISSING_CREDENTIAL')
     },
     resolveAttachments: () => ctx.get('attachments'),
+    resolveImageAccess: (attachments, ref) => resolveEnterpriseImageAccess(ctx, attachments, ref),
   })
 
   const adapter = new TransformingEnterpriseAdapter(baseAdapter, transforms, (provider, model) => (

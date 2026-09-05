@@ -6,6 +6,7 @@
 
 | dsh-oidc | Node.js | DSH | pi-ai | Status |
 | --- | --- | --- | --- | --- |
+| `0.1.0` | 22, 24 | `0.1.2-rc.1` / `a66e4702…` | `^0.84.2` (locked at `0.84.4`) | Exact peer closure, Host/Client contract checks, clean npm installation, and isolated Web/RPC acceptance. |
 | `0.1.0-alpha.11` | 22, 24 | Declared baseline remains `0.1.2-alpha.2`; separate mainline `0.1.2-rc.1` configuration RPC probe | `^0.84.2` | npm scope migration with persistent contracts retained; the rc.1 probe is not full compatibility acceptance. |
 | `0.1.0-alpha.10` | 22, 24 | `0.1.2-alpha.2` / `0a53fb55…` | `^0.84.2` (`0.84.4` in npm/source Runtimes) | Migrated to `SettingsProvider.installSection()`; full checks pass through both npm and source release-pack paths. |
 | `0.1.0-alpha.9` | 22, 24 | `0.1.2-alpha.1` / `cd5ef814…` | `^0.84.2` (`0.84.4` in the reviewed source Runtime) | Web and native consume only standard Enterprise Profiles; product institution-catalog conversion is completely outside the plugin. |
@@ -18,7 +19,7 @@
 | `0.1.0-alpha.2` | 22, 24 (development) | `0.1.1-rc.2` / `b150a551…` | `0.82.1` | Standard UserInfo name presentation unified across Web and native adapters; real deployment acceptance pending. |
 | `0.1.0-alpha.1` | 22, 24 (development) | `0.1.1-rc.2` / `b150a551…` | `0.82.1` | Unit/build/package baseline; real deployment acceptance still required. |
 
-Only exact DSH peer versions in `package.json` are supported. Other versions may install only after explicit peer override and are untested.
+The supported current line is `0.1.0` with the exact DSH `0.1.2-rc.1` peers declared in `package.json`; alpha rows are historical validation records only. Other versions may install only after explicit peer override and are untested.
 
 ## Contract versions
 

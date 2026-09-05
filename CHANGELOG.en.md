@@ -6,6 +6,21 @@ All notable changes are documented here. The format follows Keep a Changelog pri
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-06
+
+### Changed
+
+- Updated the exact compatibility baseline to DeepSeek Harness `0.1.2-rc.1` (`a66e4702…`) and stopped claiming current support for the alpha.2 combination that is outside this release acceptance.
+- Expanded and locked the DSH peer closure, including the page package that declares `settings.general.item`, so an unlocked host cannot mix alpha.2 and rc.1 packages during npm resolution.
+- Audited Credential Provider, Settings, LLM/Pi Provider, WebServer, API Remotes, Typert, and Client page-slot contracts; added the automated `check:dsh` contract check.
+- Provider configuration now emits only declared fields and copies them into mutable data accepted by the rc.1 Settings/PiAi schema; reasoning and compat values are constrained to the rc.1 supported sets.
+- The Settings section now validates serviceability so schema-shaped values that cannot construct an enterprise Provider are rejected before persistence.
+- The Provider wrapper now delegates `imageRequestPricing` and follows rc.1's official attachment-to-read-only execution-path resolution chain.
+- Enterprise single brand slots now use an explicit negative priority to shadow rc.1's official brand entries without colliding at default priority 0 and aborting Client initialization.
+- Stabilized the npm package version as `@eduwork/dsh-oidc@0.1.0` while retaining `dsh-oidc/v1alpha1`, `oidcAccounts`, credential references, Provider identities, the settings namespace, and user data.
+- Expanded CI to a Node.js 22/24 matrix on Windows and Linux and added a manual workflow that checks/packages by default and publishes through npm Trusted Publishing only after explicit authorization.
+- Documentation-link and secret scans now explicitly ignore Git-excluded `dist/` acceptance artifacts so local caches cannot change source-check results.
+
 ## [0.1.0-alpha.11] - 2026-09-05
 
 - Move the npm identity to `@eduwork/dsh-oidc`; update installation/module paths and Client registration together.

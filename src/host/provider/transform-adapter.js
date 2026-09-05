@@ -8,6 +8,7 @@ export class TransformingEnterpriseAdapter {
 
   providerInfo(provider) { return this.inner.providerInfo(provider) }
   providerRetryPolicy(provider) { return this.inner.providerRetryPolicy(provider) }
+  imageRequestPricing(provider, model) { return this.inner.imageRequestPricing(provider, model) }
 
   async listModels(provider) {
     const models = await this.inner.listModels(provider)
@@ -62,4 +63,3 @@ export class TransformingEnterpriseAdapter {
     yield* this.streamPrepared(options, prepared)
   }
 }
-

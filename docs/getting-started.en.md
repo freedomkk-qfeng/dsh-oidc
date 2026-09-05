@@ -10,7 +10,7 @@ This guide is for operators integrating `dsh-oidc` into their own DeepSeek Harne
 
 | Component | Minimum requirement |
 | --- | --- |
-| DSH Host | DeepSeek Harness `0.1.2-alpha.2` on Node.js 22+. |
+| DSH Host | DeepSeek Harness `0.1.2-rc.1` on Node.js 22+. |
 | Institutional enterprise-model integration service | One accountable owner jointly delivers the OIDC Provider, fixed Key Binding API, and OpenAI-compatible model gateway; all three are required. |
 | Enterprise Profile | Trusted local JSON containing public configuration only. |
 | Credential Provider | The current Web backend supports trusted single-user local storage only. |
@@ -59,7 +59,7 @@ The Profile is trusted deployment data, not a secret store. It must not contain 
 The package is itself an installable DSH Bundle. Team deployments should install the reviewed, exact version from npm:
 
 ```bash
-dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0
 ```
 
 For auditing, development, or testing unpublished changes, install from a local checkout instead:
@@ -78,11 +78,7 @@ From the parent directory, the equivalent explicit relative-path command is:
 dsh plugin --profile web add ./dsh-oidc
 ```
 
-DSH links the checkout into `$DSH_HOME/profiles/web`; it does not scan or copy the invoking directory. Keep the checkout in place and pin a reviewed commit for source-based deployments. To intentionally follow alpha updates, use:
-
-```bash
-dsh plugin --profile web add @eduwork/dsh-oidc@alpha
-```
+DSH links the checkout into `$DSH_HOME/profiles/web`; it does not scan or copy the invoking directory. Keep the checkout in place and pin a reviewed commit for source-based deployments. Production and team Profiles should use an exact npm version and must not mix another DSH prerelease line.
 
 Set the trusted local Profile path and start DSH on the fixed loopback host:
 
@@ -134,4 +130,4 @@ The current Web backend does not support shared Web. A shared scenario needs a n
 - **A subject string is shown instead of a name:** return a non-empty standard `name` from UserInfo under the `profile` scope; private JSON-path mappings are intentionally unsupported.
 - **Login works but models do not:** inspect `/bootstrap`, explicit provisioning state, exact `provider_id` equality, and whether the model gateway accepts the bound key.
 - **Thinking works but selectable effort does not:** set model `compat.supportsReasoningEffort` to `false`; thinking remains enabled while the unsupported effort parameter is removed.
-- **Why the enterprise controls are inside Models:** DSH `0.1.2-alpha.2` exposes the official `settings.models.footer` extension slot. `dsh-oidc` mounts its management UI there and leaves the upstream Models page enabled; no product-private Models-page fork is required.
+- **Why the enterprise controls are inside Models:** DSH `0.1.2-rc.1` exposes the official `settings.models.footer` extension slot. `dsh-oidc` mounts its management UI there and leaves the upstream Models page enabled; no product-private Models-page fork is required.

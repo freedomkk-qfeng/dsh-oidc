@@ -2,7 +2,7 @@
 
 **简体中文** | [English](0001-one-plugin-composition-boundary.en.md)
 
-- 状态：Alpha 阶段已接受
+- 状态：已接受
 - 日期：2026-08-25
 
 ## 背景

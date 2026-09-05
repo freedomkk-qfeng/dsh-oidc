@@ -1,6 +1,6 @@
 # dsh-oidc
 
-> npm 包：`@eduwork/dsh-oidc@0.1.0-alpha.11`。旧无作用域包保留供迁移；安装切换与数据兼容见 [迁移说明](docs/EDUWORK-MIGRATION.md)。
+> npm 包：`@eduwork/dsh-oidc@0.1.0`。旧无作用域包和作用域 alpha 版本保留供迁移；安装切换与数据兼容见 [迁移说明](docs/EDUWORK-MIGRATION.md)。
 
 **简体中文** | [English](README.en.md)
 
@@ -15,7 +15,7 @@
 
 插件 Web 优先，不依赖 Wails。桌面产品可以切换到 native account backend，但 Enterprise Profile、Provider 路由、前端账号契约和 Key Binding 语义不变。
 
-> **当前状态：alpha。** 当前源码已适配 DSH `0.1.2-alpha.2`（提交 `0a53fb55…`），并在官方 npm Runtime 与锁定源码 release-pack Runtime 中完成构建和集成检查；Enterprise Profile 仍为 `v1alpha1`。正式生产前仍必须完成真实 OIDC/Key Binding 联调、宿主凭据隔离审计和 DSH 升级兼容性测试。
+> **当前版本：0.1.0。** 当前源码精确适配 DSH `0.1.2-rc.1`（提交 `a66e4702…`），并锁定、检查完整 DSH peer 闭包。软件包使用稳定版本号，但 Enterprise Profile 仍为 `v1alpha1`；正式生产前仍必须完成真实 OIDC/Key Binding 联调和宿主凭据隔离审计。
 
 准备接入自己的机构？先读 **[服务端接口规范](docs/server-integration-contract.md)**，再按 **[完整中文接入指南](docs/getting-started.md)** 部署。前者以请求、响应、字段和错误码形式定义一个机构服务必须共同实现的 OIDC + PKCE、Key Binding 和模型网关能力；后者覆盖配置、安装、验收和排障。
 
@@ -68,7 +68,7 @@
 4. 从 npm 安装经过复核的精确版本：
 
 ```bash
-dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0-alpha.11
+dsh plugin --profile web add @eduwork/dsh-oidc@0.1.0
 ```
 
 需要审计、开发或测试尚未发布的改动时，也可以从本地 checkout 安装：
@@ -81,7 +81,7 @@ npm run check
 dsh plugin --profile web add .
 ```
 
-本地路径安装会把当前 checkout 以依赖链接到 DSH `web` Profile；安装后不要移动或删除源码目录。团队部署应优先固定经过复核的 npm 精确版本；需要主动跟随 alpha 更新时可以使用 `@eduwork/dsh-oidc@alpha`。
+本地路径安装会把当前 checkout 以依赖链接到 DSH `web` Profile；安装后不要移动或删除源码目录。团队部署应固定经过复核的 npm 精确版本，不要混装其他 DSH 预发布线。
 
 高级产品也可以在自己的 DSH bundle 中显式引入 `dsh-oidc`：
 
@@ -125,7 +125,7 @@ npm ci
 npm run check
 ```
 
-完整检查包括 Host/Client 构建、单元测试、OIDC 安全边界测试、JSON Schema 示例校验、OpenAPI 结构检查、敏感信息扫描和 npm tarball 预检。
+完整检查包括 DSH rc.1 Host/Client/API 契约核对、Host/Client 构建、单元测试、OIDC 安全边界测试、JSON Schema 示例校验、OpenAPI 结构检查、敏感信息扫描和 npm tarball 预检。
 
 详细材料：
 

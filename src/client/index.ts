@@ -6,6 +6,7 @@ import { ManagedProviderCard } from './managed-provider.js'
 export const inject = ['slots', 'remote', 'theme']
 
 const h = React.createElement
+const enterpriseBrandPriority = -100
 const border = 'var(--dsw-alias-border-l2, #e5d4cc)'
 const button = Object.freeze({
   border: `1px solid ${border}`, borderRadius: 9, padding: '8px 12px', cursor: 'pointer',
@@ -69,9 +70,9 @@ function installBrand(ctx: any, profile: any) {
     })
   }
   const effects = [
-    ctx.slots.inject('sidebar.brand.mark', () => ctx.slots.register({ name: 'sidebar.brand.mark', inject: () => ({ profile }) }, ProductMark)),
-    ctx.slots.inject('sidebar.brand.name', () => ctx.slots.register({ name: 'sidebar.brand.name', inject: () => ({ profile }) }, ProductName)),
-    ctx.slots.inject('conversation.hero.brand.mark', () => ctx.slots.register({ name: 'conversation.hero.brand.mark', inject: () => ({ profile }) }, ProductMark)),
+    ctx.slots.inject('sidebar.brand.mark', () => ctx.slots.register({ name: 'sidebar.brand.mark', priority: enterpriseBrandPriority, inject: () => ({ profile }) }, ProductMark)),
+    ctx.slots.inject('sidebar.brand.name', () => ctx.slots.register({ name: 'sidebar.brand.name', priority: enterpriseBrandPriority, inject: () => ({ profile }) }, ProductName)),
+    ctx.slots.inject('conversation.hero.brand.mark', () => ctx.slots.register({ name: 'conversation.hero.brand.mark', priority: enterpriseBrandPriority, inject: () => ({ profile }) }, ProductMark)),
   ]
   return () => {
     for (const dispose of effects.reverse()) dispose?.()
