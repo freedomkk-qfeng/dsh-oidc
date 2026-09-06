@@ -102,7 +102,7 @@
   "homepage": "https://github.com/freedomkk-qfeng/dsh-oidc#readme",
   "license": "MIT",
   "dependencies": {
-    "zod": "4.4.3"
+    "zod": "4.5.4"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "4.0.2",
