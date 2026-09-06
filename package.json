@@ -134,10 +134,10 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.3.28",
+    "@types/react": "^19.2.18",
     "ajv": "^8.17.1",
-    "tsdown": "0.22.14",
-    "typescript": "^5.9.3",
+    "tsdown": "0.23.0",
+    "typescript": "^7.0.2",
     "yaml": "^2.8.1"
   }
 }
