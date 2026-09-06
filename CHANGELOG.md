@@ -20,6 +20,9 @@
 - npm 包版本稳定为 `@eduwork/dsh-oidc@0.1.0`；保留 `dsh-oidc/v1alpha1`、`oidcAccounts`、凭据引用、Provider 标识、设置命名空间和用户数据。
 - CI 扩展为 Windows/Linux 上的 Node.js 22/24 矩阵，并增加默认只检查/打包、显式授权后才通过 npm Trusted Publishing 发布的手动工作流。
 - 文档链接和敏感信息检查显式忽略已被 Git 排除的 `dist/` 验收产物，避免本地缓存影响源码检查结果。
+- 发布治理如实记录初期单一维护者模式，以独立技术复核、CI/专项回归和维护者决定留痕；Trusted Publisher 尚未配置时，首次 npm 发布使用浏览器 2FA 且不声称 provenance。
+- npm 包补齐行为准则、贡献、安全、支持、治理和维护者双语文档，避免 README 在安装包内出现悬空的相对链接。
+- 测试入口固定到仓库 `test/*.test.js`，避免被 Git 忽略的本地验收快照改变测试发现范围和计数。
 
 ## [0.1.0-alpha.11] - 2026-09-05
 

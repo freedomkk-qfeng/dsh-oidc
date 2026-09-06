@@ -57,6 +57,6 @@ No public tag/npm publish until all of the following pass:
 - native desktop no-regression acceptance;
 - OIDC negative tests and Key Binding authorization tests;
 - documentation/version/changelog update;
-- two-person review for authentication, credential, build, or release workflow changes.
+- independent technical review, CI/focused regression evidence, and a recorded maintainer decision for authentication, credential, build, or release workflow changes; add independent human approval after a second maintainer joins.
 
 See [the public release checklist](release-checklist.en.md) for the operator checklist.

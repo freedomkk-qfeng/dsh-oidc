@@ -35,7 +35,7 @@ npm run check
 - 在干净安装中通过 `npm run check`；
 - 声明所有新增依赖、许可证、安装脚本和引入理由。
 
-修改 OIDC、Key Binding、凭据、Profile 校验、native 账号契约、构建/发布流程或依赖锁定，需要两人批准，其中至少一位是负责安全的维护者。
+修改 OIDC、Key Binding、凭据、Profile 校验、native 账号契约、构建/发布流程或依赖锁定，必须提供独立技术复核、CI 和专项回归证据，并由当前维护者明确接受结论。项目增加第二位维护者后，此类变更还应取得独立人工批准。
 
 ## 代码风格
 
@@ -51,6 +51,6 @@ npm run check
 - Commit 应便于审查；项目策略支持时使用签名。
 - 不得提交生成的凭据、`.env`、归档或 session 日志。
 - `lib/` 由 `npm run build` 生成；审查源码和 tarball，而不只是压缩产物。
-- 维护者通过受保护 tag 和批准的工作流发布，并启用 npm provenance。
+- 优先通过受保护 tag 和批准的 Trusted Publishing 工作流发布。该流程尚未配置时，初始维护者可以用 npm CLI 和浏览器 2FA 发布已冻结并核验的 tarball，但不得声称 provenance；只有 npm 实际生成 attestation 后才能记录 provenance。
 
 参与贡献即表示同意遵守[行为准则](CODE_OF_CONDUCT.md)，并确认你有权按 MIT 许可证提交相关贡献。

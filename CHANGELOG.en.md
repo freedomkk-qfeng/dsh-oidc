@@ -20,6 +20,9 @@ All notable changes are documented here. The format follows Keep a Changelog pri
 - Stabilized the npm package version as `@eduwork/dsh-oidc@0.1.0` while retaining `dsh-oidc/v1alpha1`, `oidcAccounts`, credential references, Provider identities, the settings namespace, and user data.
 - Expanded CI to a Node.js 22/24 matrix on Windows and Linux and added a manual workflow that checks/packages by default and publishes through npm Trusted Publishing only after explicit authorization.
 - Documentation-link and secret scans now explicitly ignore Git-excluded `dist/` acceptance artifacts so local caches cannot change source-check results.
+- Release governance now accurately records the initial single-maintainer phase and relies on retained independent technical review, CI/focused regression evidence, and an explicit maintainer decision. Until Trusted Publishing is configured, the first npm publication uses browser 2FA and does not claim provenance.
+- The npm package now includes the bilingual code of conduct, contribution, security, support, governance, and maintainer documents so README-relative links do not dangle after installation.
+- Test discovery is pinned to the repository's `test/*.test.js`, so Git-ignored local acceptance snapshots cannot change the discovered test set or count.
 
 ## [0.1.0-alpha.11] - 2026-09-05
 

@@ -2,19 +2,19 @@
 
 **简体中文** | [English](release-checklist.en.md)
 
-在发布 Pull Request 中记录审查人、日期、命令输出链接和例外说明。任何未勾选项目都会阻止公开发布，除非维护者和安全维护者书面说明其不适用原因。
+在发布 Pull Request 或发行记录中记录维护者、日期、命令输出链接和例外说明。适用但未完成的安全、兼容或供应链项目会阻止公开发布；不适用项由当前维护者记录原因。项目处于初期单一维护者阶段时，不虚构第二位人工审批，以独立技术复核、CI/专项回归证据和维护者明确决定作为发布依据。
 
 ## 授权与项目元数据
 
 - [ ] 仓库所有者确认公开发布和 MIT 许可证。
 - [ ] `freedomkk-qfeng/dsh-oidc` 远程仓库位置和 `@eduwork/dsh-oidc` npm 包所有权均已确认。
-- [ ] 维护者、安全维护者和发布经理名单及替补已记录。
+- [ ] 维护者、安全维护者和发布经理名单已记录，并如实说明当前是否存在替补及恢复路径。
 - [ ] GitHub Private Vulnerability Reporting 已启用并完成一次无敏感数据的入口检查。
 - [ ] ECNU/ChatECNU 名称、示例文字、颜色和商标声明获批。
 
 ## 源码与协议审查
 
-- [ ] OIDC、Key Binding、模型网关一致性、Profile 校验、Provider 凭据和 native 边界已完成双人审查。
+- [ ] OIDC、Key Binding、模型网关一致性、Profile 校验、Provider 凭据和 native 边界已完成独立技术复核，维护者已在发布记录中接受结论和例外。
 - [ ] Enterprise Profile JSON Schema 与运行行为一致。
 - [ ] OpenAPI 与 Key Binding 规范正文和实现一致。
 - [ ] OIDC 标准引用和限制仍然有效。
@@ -56,7 +56,8 @@
 - [ ] 已审查 `npm pack --dry-run` 和解压后的 tarball，且只包含预期文件。
 - [ ] Source map 不包含私有绝对路径或秘密。
 - [ ] Tag、发布说明和 checksum 已准备。
-- [ ] npm Trusted Publisher 已绑定仓库 `freedomkk-qfeng/dsh-oidc`、workflow `release.yml` 和 environment `npm`；在绑定完成前只以 `publish=false` 运行手动工作流。
-- [ ] 发布 job 使用固定的 npm CLI `11.6.2`（满足 Trusted Publishing 对 npm `>=11.5.1`、Node `>=22.14.0` 的要求），且该提交的 Windows/Linux × Node 22/24 CI 已成功。
-- [ ] 发布时显式填写现有标签 `v<package version>` 并启用 `publish=true`；workflow 校验标签、提交、tarball 身份和 SHA-256 后才使用 provenance 发布，不使用长期本地 publish token。
+- [ ] 实际发布路径已记录：Trusted Publisher 尚未配置时，手动 workflow 只以 `publish=false` 运行；首次稳定版可以使用维护者 npm CLI + 浏览器 2FA 发布冻结 tarball，且明确不声称 provenance。
+- [ ] 若使用 Trusted Publishing，Publisher 已绑定仓库 `freedomkk-qfeng/dsh-oidc`、workflow `release.yml` 和 environment `npm`；发布 job 使用固定 npm CLI `11.6.2`，且该提交的 Windows/Linux × Node 22/24 CI 已成功。
+- [ ] 发布输入与产物已按所选路径核验：CLI 路径核对冻结 tarball 身份、SHA-256、2FA 和 registry 结果；Trusted 路径还核对现有 `v<package version>` tag、提交、workflow artifact 和实际 npm provenance attestation。
+- [ ] 发布凭据没有写入仓库、日志或交付物；未配置 Trusted Publisher 时也不宣称使用了 Trusted Publishing。
 - [ ] 已确认回滚、弃用和漏洞通知计划。

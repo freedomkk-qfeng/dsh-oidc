@@ -10,9 +10,9 @@
 
 - **维护者**：合并普通变更、处理 Issue 并管理兼容性。
 - **安全维护者**：审查认证、授权、凭据、构建和发布变更，并处理私有报告。
-- **发布经理**：控制受保护 tag、npm 发布、provenance 和回滚。
+- **发布经理**：控制 tag、npm 发布、发布证据、可用时的 provenance 和回滚。
 
-维护者名单见 [`MAINTAINERS.md`](MAINTAINERS.md)。一个人初期可以兼任多个角色；首次稳定版和 npm 正式发布前应补充发布与安全恢复的替补。安全敏感变更应尽可能获得独立复核。
+维护者名单见 [`MAINTAINERS.md`](MAINTAINERS.md)。项目当前由一名维护者兼任上述角色，尚无替补。发布与安全恢复替补、多维护者权限分离和第二位人工审查是后续治理目标；当前发布必须如实记录独立技术复核、CI/回归证据、已知限制和维护者决定。
 
 ## 决策流程
 
@@ -23,15 +23,16 @@
 
 ## 审查与合并
 
-- 普通文档、测试和 UI 变更至少一人批准。
-- OIDC、Key Binding、Profile 校验、秘密、native 边界、工作流、依赖或发布变更至少两人批准。
-- 作者不能是其安全敏感变更的唯一批准人。
-- 公开远程仓库必须启用 CI、强制审查和分支保护。
+- 普通文档、测试和 UI 变更由当前维护者审批并保持可审查的 Pull Request 记录。
+- OIDC、Key Binding、Profile 校验、秘密、native 边界、工作流、依赖或发布变更必须形成独立技术复核和 CI/专项回归证据，由维护者在 Pull Request 或发布记录中明确接受结论和例外。
+- 当前没有第二位人工维护者，不得声称完成了两人审批。维护者名单扩充后，安全敏感变更应增加独立人工批准。
+- 公开远程仓库必须启用 CI。分支保护和强制人工审查应在仓库权限与维护者配置具备条件后启用；初期单一维护者直接合并时必须留存检查结果和决定依据。
 
 ## 发布
 
-- 发布经理只有在完成[公开发布检查表](docs/release-checklist.md)后，才能发布签名/受保护 tag。
-- npm 发布使用短期 trusted publishing/OIDC 和 provenance，不使用工作站上的长期 Token。
+- 初期由当前维护者兼任发布经理；只有在完成[公开发布检查表](docs/release-checklist.md)并记录证据和例外后，才能创建 tag 或发布 npm 包。
+- npm Trusted Publishing/OIDC 和 provenance 是优先的目标流程。尚未配置 Trusted Publisher 时，首次稳定版可以由维护者使用 npm CLI 和浏览器 2FA 发布经过校验的冻结 tarball；该路径不得声称具有 provenance，也不得把长期 Token 写入仓库、日志或交付物。
+- Trusted Publisher 配置完成后，发布应切换到受保护 tag 和批准的工作流，并以实际 npm attestation 为准记录 provenance。
 - 发布记录包含 checksum、兼容性矩阵、Changelog、已知限制和回滚说明。
 - 发现发布版本已被攻陷或不安全时，应迅速弃用、轮换秘密，并按安全政策通知用户。
 

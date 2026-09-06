@@ -2,19 +2,19 @@
 
 [简体中文](release-checklist.md) | **English**
 
-Record reviewer names, date, command output links, and exceptions in the release pull request. An unchecked item blocks public release unless a maintainer and security maintainer document why it is not applicable.
+Record the maintainer, date, command-output links, and exceptions in the release pull request or release record. An applicable but incomplete security, compatibility, or supply-chain item blocks public release; the current maintainer records why an item is not applicable. During the initial single-maintainer phase, do not invent a second human approval: independent technical review, CI/focused regression evidence, and an explicit maintainer decision form the release basis.
 
 ## Authority and project metadata
 
 - [ ] Repository owner confirmed public release and the MIT license.
 - [ ] The `freedomkk-qfeng/dsh-oidc` remote and ownership of the `@eduwork/dsh-oidc` npm package are confirmed.
-- [ ] Maintainer, security, and release-manager rosters recorded with backups.
+- [ ] Maintainer, security, and release-manager rosters recorded, accurately stating whether backups and a recovery path currently exist.
 - [ ] GitHub Private Vulnerability Reporting is enabled and its entry point has been checked without sensitive data.
 - [ ] ECNU/ChatECNU name, example text, colors, and trademark notice approved.
 
 ## Source and protocol review
 
-- [ ] Two-person review completed for OIDC, Key Binding, model-gateway invariants, Profile validation, Provider credentials, and native boundary.
+- [ ] Independent technical review completed for OIDC, Key Binding, model-gateway invariants, Profile validation, Provider credentials, and the native boundary; the maintainer accepted findings and exceptions in the release record.
 - [ ] Enterprise Profile JSON Schema matches runtime behavior.
 - [ ] OpenAPI matches normative Key Binding prose and implementation.
 - [ ] OIDC standard references and limitations are current.
@@ -56,7 +56,8 @@ Record reviewer names, date, command output links, and exceptions in the release
 - [ ] `npm pack --dry-run` and extracted tarball reviewed; only intended files included.
 - [ ] Source maps contain no private absolute paths or secrets.
 - [ ] Tag/release notes/checksums prepared.
-- [ ] npm Trusted Publisher is bound to repository `freedomkk-qfeng/dsh-oidc`, workflow `release.yml`, and environment `npm`; until that binding exists, the manual workflow is run only with `publish=false`.
-- [ ] The publish job uses pinned npm CLI `11.6.2` (meeting Trusted Publishing's npm `>=11.5.1` and Node `>=22.14.0` requirements), and this commit's Windows/Linux × Node 22/24 CI is successful.
-- [ ] Publication uses an explicitly supplied existing `v<package version>` tag and `publish=true`; the workflow verifies the tag, commit, tarball identity, and SHA-256 before publishing with provenance and no long-lived local publish token.
+- [ ] The actual publication path is recorded: until a Trusted Publisher is configured, run the manual workflow only with `publish=false`; the first stable release may use the maintainer's npm CLI plus browser 2FA to publish the frozen tarball, explicitly without claiming provenance.
+- [ ] When using Trusted Publishing, the Publisher is bound to repository `freedomkk-qfeng/dsh-oidc`, workflow `release.yml`, and environment `npm`; the job uses pinned npm CLI `11.6.2`, and this commit's Windows/Linux × Node 22/24 CI is successful.
+- [ ] Inputs and artifacts are verified for the selected path: the CLI path checks frozen tarball identity, SHA-256, 2FA, and registry results; the Trusted path additionally checks the existing `v<package version>` tag, commit, workflow artifact, and an actual npm provenance attestation.
+- [ ] Publishing credentials were not written to the repository, logs, or deliverables, and the release does not claim Trusted Publishing before it is configured.
 - [ ] Rollback/deprecation and vulnerability-notification plan confirmed.

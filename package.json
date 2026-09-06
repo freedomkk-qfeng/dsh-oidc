@@ -33,6 +33,18 @@
     "protocol/openapi.yaml",
     "README.md",
     "README.en.md",
+    "CODE_OF_CONDUCT.md",
+    "CODE_OF_CONDUCT.en.md",
+    "CONTRIBUTING.md",
+    "CONTRIBUTING.en.md",
+    "GOVERNANCE.md",
+    "GOVERNANCE.en.md",
+    "MAINTAINERS.md",
+    "MAINTAINERS.en.md",
+    "SECURITY.md",
+    "SECURITY.en.md",
+    "SUPPORT.md",
+    "SUPPORT.en.md",
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
     "THIRD_PARTY_NOTICES.en.md",
@@ -63,8 +75,8 @@
     "build:client": "tsdown",
     "build": "npm run build:host && npm run build:client",
     "typecheck": "tsc --noEmit",
-    "test": "node --test",
-    "test:coverage": "node --test --experimental-test-coverage",
+    "test": "node --test \"test/*.test.js\"",
+    "test:coverage": "node --test --experimental-test-coverage \"test/*.test.js\"",
     "check:schemas": "node scripts/check-schemas.mjs",
     "check:secrets": "node scripts/check-secrets.mjs",
     "check:licenses": "node scripts/check-licenses.mjs",
@@ -78,8 +90,7 @@
     "node": ">=22.0.0"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "repository": {
     "type": "git",
